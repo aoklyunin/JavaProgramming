@@ -2,6 +2,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 
+// TODO: 15.09.2016 Программа подстановки полиномов не учитывает умножение свободного члена b(p) на x(t) 
 public class FirstClass {
 
     static TexStruct tx;
