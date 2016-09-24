@@ -13,7 +13,7 @@
         <plugins>
 
             <plugin>
-                    <groupId>com.zenjava</groupId>
+                <groupId>com.zenjava</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>8.7.0</version>
                 <configuration>
@@ -65,7 +65,7 @@
                         <configuration>
                             <headerType>gui</headerType>
                             <jar>${project.build.directory}/${artifactId}-${version}-shaded.jar</jar>
-                            <outfile>Program.exe</outfile>
+                            <outfile>${project.build.directory}/hasCode.exe</outfile>
                             <downloadUrl>http://java.com/download</downloadUrl>
                             <classPath>
                                 <mainClass>com.hascode.tutorial.Main</mainClass>
@@ -80,13 +80,13 @@
                                 <fileVersion>1.0.0.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>${project.name}</fileDescription>
-                                <copyright>2016 Copyright</copyright>
+                                <copyright>2012 hasCode.com</copyright>
                                 <productVersion>1.0.0.0</productVersion>
                                 <txtProductVersion>1.0.0.0</txtProductVersion>
                                 <productName>${project.name}</productName>
-                                <companyName>MyCompany</companyName>
-                                <internalName>Program</internalName>
-                                <originalFilename>Program.exe</originalFilename>
+                                <companyName>hasCode.com</companyName>
+                                <internalName>hasCode</internalName>
+                                <originalFilename>hasCode.exe</originalFilename>
                             </versionInfo>
                         </configuration>
                     </execution>
