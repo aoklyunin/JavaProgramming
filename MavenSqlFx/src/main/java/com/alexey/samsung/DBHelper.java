@@ -15,7 +15,7 @@ public class DBHelper {
     static final String USER = "root";
     static final String PASS = "toor";
 
-    public void open() {
+    public void createDB(String dbName) {
         Connection conn = null;
         Statement stmt = null;
         try {
@@ -30,7 +30,7 @@ public class DBHelper {
             System.out.println("Creating database...");
             stmt = conn.createStatement();
 
-            String sql = "CREATE DATABASE STUDENTS";
+            String sql = "CREATE DATABASE "+dbName;
             stmt.executeUpdate(sql);
             System.out.println("Database created successfully...");
         } catch (SQLException se) {

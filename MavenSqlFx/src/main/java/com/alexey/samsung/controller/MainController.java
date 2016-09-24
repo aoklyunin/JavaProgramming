@@ -20,7 +20,7 @@ public class MainController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 DBHelper dbHelper = new DBHelper();
-                dbHelper.open();
+                dbHelper.createDB("st2");
             }
         });
     }
