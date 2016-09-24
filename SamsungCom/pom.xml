@@ -15,7 +15,7 @@
             <plugin>
                 <groupId>com.zenjava</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>1.0</version>
+                <version>8.7.0</version>
                 <configuration>
                     <mainClass>com.alexey.samsung.controller.MainController</mainClass>
                 </configuration>
@@ -28,7 +28,6 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
@@ -50,7 +49,7 @@
                             <classPath>
                                 <mainClass>com.alexey.samsung.controller.MainController</mainClass>
                             </classPath>
-                            <icon>Project.ico</icon>
+                            <icon>img/icon.jpg</icon>
                             <jre>
                                 <minVersion>1.5.0</minVersion>
                                 <maxVersion>1.6.0</maxVersion>
