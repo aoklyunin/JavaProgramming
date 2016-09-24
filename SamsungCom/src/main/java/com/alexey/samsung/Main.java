@@ -1,4 +1,4 @@
-package com.a
+package com.alexey.samsung;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +26,7 @@ public class Main extends Application {
     public void initRootLayout() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("sample.fxml"));
+            loader.setLocation(getClass().getResource("/fxml/hello.fxml"));
             rootLayout = (AnchorPane) loader.load();
 
             Scene scene = new Scene(rootLayout);
@@ -36,6 +36,9 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
+
+
+
 
 
     public static void main(String[] args) {

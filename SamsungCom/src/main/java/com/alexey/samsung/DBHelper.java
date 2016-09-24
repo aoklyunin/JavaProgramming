@@ -1,3 +1,4 @@
+package com.alexey.samsung;
 import java.sql.*;
 
 import static javax.xml.bind.DatatypeConverter.printString;
