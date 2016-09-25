@@ -4,6 +4,7 @@ package com.alexey.samsung;
  * Created by aokly on 25.09.2016.
  */
 
+import com.alexey.samsung.controller.MainController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -25,12 +26,12 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 
-public final class VkApi {
+public final class VkApi implements AutoCloseable {
 
-    public static final String APP_ID = "5229876";
+    private static final String APP_ID = "5229876";
     public static final String ACCESS_TOKEN = "1f1e0beb1f47d99c4c2f2477f90f589de3cfd096aecb5e91741acf86aa452a0aa48636a3e2a252b1803be";
 
-    private static final String API_VERSION = "5.21";
+    private static final String API_VERSION = "5.53";
 
     private static final String AUTH_URL = "https://oauth.vk.com/authorize"
             + "?client_id={APP_ID}"
@@ -45,11 +46,11 @@ public final class VkApi {
             + "&access_token={ACCESS_TOKEN}"
             + "&v=" + API_VERSION;
 
-    public static VkApi with(String appId, String accessToken) throws IOException {
+    static VkApi with(String appId, String accessToken) throws IOException {
         return new VkApi(appId, accessToken);
     }
 
-    public static final String KET_AT = "vk_access_token";
+    private static final String KET_AT = "vk_access_token";
 
     private String accessToken;
 
@@ -60,6 +61,7 @@ public final class VkApi {
             throw new Error("Need access token");
         }
     }
+
     private boolean checkAccessToken() {
         try (DBHelper dbHelper = new DBHelper()) {
             dbHelper.connect();
@@ -67,9 +69,10 @@ public final class VkApi {
             if (s == null)
                 return false;
             else {
-
+                accessToken = s;
+               //System.out.println(accessToken);
+                return testVKconnection();
             }
-            return true;
         } catch (SQLException e) {
             System.out.println("Ошибка доступа к БД из VKAPI:" + e);
             return false;
@@ -96,15 +99,15 @@ public final class VkApi {
                     if (newState == Worker.State.SUCCEEDED) {
                         String url = webEngine.getLocation();
                         if (url.contains("access_token")) {
-                            accessToken = url.substring(url.indexOf("access_token") + 13);
+                            accessToken = url.substring(url.indexOf("access_token") + 12);
                             accessToken = accessToken.substring(1, accessToken.indexOf("&"));
                             if (accessToken.length() != 0) {
                                 stage.close();
                                 try (DBHelper dbHelper = new DBHelper()) {
                                     dbHelper.connect();
-                                    dbHelper.setConfVal(KET_AT,accessToken);
+                                    dbHelper.setConfVal(KET_AT, accessToken);
                                     successVk();
-                                }catch (SQLException e){
+                                } catch (SQLException e) {
                                     System.out.println("Ошибка доступа к БД");
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -136,9 +139,9 @@ public final class VkApi {
         }
     }
 
-    public void successVk() {
-        System.out.println("Connection is success establish: " + accessToken);
-    }
+    private void successVk() {
+        System.out.println("Connection is success establish: ");
+     }
 
     private void auth(String appId) throws IOException {
         String reqUrl = AUTH_URL
@@ -158,7 +161,7 @@ public final class VkApi {
         return invokeApi("messages.getDialogs", null);
     }
 
-    public String getHistory(String userId, int offset, int count, boolean rev) throws IOException {
+    String getHistory(String userId, int offset, int count, boolean rev) throws IOException {
         return invokeApi("messages.getHistory", Params.create()
                 .add("user_id", userId)
                 .add("offset", String.valueOf(offset))
@@ -182,6 +185,17 @@ public final class VkApi {
         return invokeApi(reqUrl);
     }
 
+    private boolean testVKconnection() {
+        try {
+            String req = invokeApi("users.get", Params.create()
+                    .add("user_ids", "1"));
+            return !(req.contains("error"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private static String invokeApi(String requestUrl) throws IOException {
         final StringBuilder result = new StringBuilder();
         final URL url = new URL(requestUrl);
@@ -192,9 +206,14 @@ public final class VkApi {
         return result.toString();
     }
 
+    @Override
+    public void close() throws Exception {
+
+    }
+
     private static class Params {
 
-        public static Params create() {
+        static Params create() {
             return new Params();
         }
 
@@ -204,12 +223,12 @@ public final class VkApi {
             params = new HashMap<>();
         }
 
-        public Params add(String key, String value) {
+        Params add(String key, String value) {
             params.put(key, value);
             return this;
         }
 
-        public String build() {
+        String build() {
             if (params.isEmpty()) return "";
             final StringBuilder result = new StringBuilder();
             params.keySet().stream().forEach(key -> {

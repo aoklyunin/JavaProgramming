@@ -29,6 +29,7 @@
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
                   <Button fx:id="button" layoutX="36.0" layoutY="24.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="87.0" text="Button" />
+                  <Button fx:id="vkButton" layoutX="40.0" layoutY="66.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="VK"/>
                </children>
             </AnchorPane>
         </items>

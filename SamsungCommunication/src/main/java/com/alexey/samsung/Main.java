@@ -10,12 +10,16 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+// TODO: 25.09.2016  Нужно кнопку VK скрыть и открывать только когда подключение сделано
+// http://stackoverflow.com/questions/30308065/changing-the-text-of-a-label-from-a-different-class-in-javafx
+
+
 
 public class Main extends Application {
 
     private Stage primaryStage;
     private AnchorPane rootLayout;
-
+    public VkApi vk;
     @Override
     public void start(Stage primaryStage) throws Exception{
         //vkHelper.save("303154598",0,1);
@@ -23,8 +27,8 @@ public class Main extends Application {
         this.primaryStage.setTitle("AddressApp");
 
         initRootLayout();
-        VkApi vk = new VkApi();
-        //vk.connect( );
+        DBHelper dbHelper= new DBHelper();
+        dbHelper.connect();
     }
 
 
@@ -36,7 +40,7 @@ public class Main extends Application {
 
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
-            //primaryStage.show();
+            primaryStage.show();
 
         } catch (IOException e) {
             e.printStackTrace();

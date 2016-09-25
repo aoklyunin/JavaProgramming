@@ -1,7 +1,12 @@
 package com.alexey.samsung;
 
+import java.io.*;
 import java.sql.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DBHelper implements AutoCloseable {
     // JDBC driver name and database URL
@@ -12,6 +17,19 @@ public class DBHelper implements AutoCloseable {
     private static final String KEY_VAL = "value";
     private static final String KEY_CKEY = "ckey";
 
+    public static final String TABLE_SCOOLERS = "schoolers";
+
+    private static final String KEY_ID = "id";
+    private static final String KEY_NAME = "name";
+    private static final String KEY_MAIL = "mail";
+    private static final String KEY_VK = "vk";
+    private static final String KEY_GITHUB = "github";
+    private static final String KEY_M_LOGIN = "mlogin";
+    private static final String KEY_M_PASSWORD = "mpassword";
+    private static final String KEY_TEL = "tel";
+    private static final String KEY_ADDITIONAL = "additional";
+    private static final String KEY_PROJECT = "project";
+
 
     static final String USER = "root";
     static final String PASS = "toor";
@@ -19,7 +37,7 @@ public class DBHelper implements AutoCloseable {
     static final String confTable = "CONF_TABLE";
 
     Connection conn = null;
-    Statement  stmt = null;
+    Statement stmt = null;
 
     private void query(String sql) throws SQLException {
         stmt.executeUpdate(sql);
@@ -95,7 +113,7 @@ public class DBHelper implements AutoCloseable {
         }
         q = q.substring(0, q.length() - 2);
         q += ")" + getQueryValues(values);
-
+        System.out.println(q);
         query(q);
     }
 
@@ -137,21 +155,66 @@ public class DBHelper implements AutoCloseable {
         }
     }
 
+    public void parceCsv()throws SQLException   {
+        try (BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(getClass().getResourceAsStream("/source/FirstForm.csv")))){
+            String commandstring;
+            ArrayList<ArrayList<String>> sList = new ArrayList<>();
+            while ((commandstring = bufferedReader.readLine()) != null) {
+                String ls_regex = "\".*?\"";
+                Pattern pattern = Pattern.compile(ls_regex);
+                Matcher matcher = pattern.matcher(commandstring);
+                ArrayList<String> sl = new ArrayList<>();
+                sList.add(sl);
+                while (matcher.find()) {
+                    String tmp = matcher.group();
+                    sl.add(tmp);
+                }
+            }
+            int size1 = sList.size();
+            int size2 = sList.get(1).size()-1;
+            String sArr[][] = new String[size1][size2];
+            for (int i = 0; i < size1; i++) {
+                sArr[i]=new String[size2];
+                for (int j = 0; j < size2; j++) {
+                    sArr[i][j] = sList.get(i).get(j+1);
+                }
+            }
+
+            String kArr[] ={
+                KEY_GITHUB, KEY_M_LOGIN, KEY_M_PASSWORD, KEY_NAME, KEY_MAIL,KEY_VK,KEY_TEL
+            };
+            addRecords(TABLE_SCOOLERS,kArr,sArr);
+            for (int i = 0; i <size1 ; i++) {
+                for (int j = 0; j <size2 ; j++) {
+                    System.out.print(sArr[i][j]+" ");
+                }
+                System.out.println();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Fuck");
+        }
+        System.out.println("eagasg");
+        // Questions.generateVariants();
+    }
+
+
     // записать значение в базу
-    public void setConfVal(String key, String val)throws SQLException{
-        if (getConfVal(key)==null){
-            String [] keys = {KEY_CKEY,KEY_VAL};
-            String [] sArr = {toSQLString(key),toSQLString(val)};
-            addRecord(confTable,keys,sArr);
-        }else{
+    public void setConfVal(String key, String val) throws SQLException {
+        if (getConfVal(key) == null) {
+            String[] keys = {KEY_CKEY, KEY_VAL};
+            String[] sArr = {toSQLString(key), toSQLString(val)};
+            addRecord(confTable, keys, sArr);
+        } else {
             System.out.println("Запись уже есть");
-            updateRecord(confTable,KEY_CKEY+"=" + toSQLString(key),KEY_VAL+"="+toSQLString(val));
+            updateRecord(confTable, KEY_CKEY + "=" + toSQLString(key), KEY_VAL + "=" + toSQLString(val));
         }
     }
 
     // обновить запись в таблице по условию
-    private void updateRecord(String table, String condition, String operation)throws SQLException{
-        String q = "UPDATE " + table + " SET "+ operation +" WHERE " + condition;
+    private void updateRecord(String table, String condition, String operation) throws SQLException {
+        String q = "UPDATE " + table + " SET " + operation + " WHERE " + condition;
         query(q);
     }
 
