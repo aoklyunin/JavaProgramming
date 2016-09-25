@@ -3,6 +3,16 @@ package com.alexey.samsung;
 /**
  * Created by aokly on 25.09.2016.
  */
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,13 +22,61 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 
-/**
- * VK API sample implementation for Java 8.
- * @see https://github.com/liosha2007/vkontakte-api
- * @author liosha2007
- * @author aNNiMON
- */
+
 public final class VkApi {
+
+    public static final String APP_ID = "5229876";
+    public static final String ACCESS_TOKEN = "1f1e0beb1f47d99c4c2f2477f90f589de3cfd096aecb5e91741acf86aa452a0aa48636a3e2a252b1803be";
+
+
+    public void connect(){
+        try {
+            Stage stage = new Stage();
+            stage.setWidth(821);
+            stage.setHeight(643);
+            Scene scene = new Scene(new Group());
+
+            final WebView browser = new WebView();
+            final WebEngine webEngine = browser.getEngine();
+
+            ScrollPane scrollPane = new ScrollPane();
+            scrollPane.setContent(browser);
+
+            webEngine.getLoadWorker().stateProperty()
+                    .addListener(new ChangeListener<Worker.State>() {
+                        @Override
+                        public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
+                            if (newState == Worker.State.SUCCEEDED) {
+                                String url = webEngine.getLocation();
+                                if (url.contains("access_token")) {
+                                    String at = url.substring(url.indexOf("access_token") + 13);
+                                    at = at.substring(1,at.indexOf("&"));
+                                    System.out.println(at);
+                                    if (at.length()!=0)
+                                        stage.close();
+                                }
+                            }
+                        }
+                    });
+            String reqUrl = AUTH_URL
+                    .replace("{APP_ID}", APP_ID)
+                    .replace("{PERMISSIONS}", "photos,messages")
+                    .replace("{REDIRECT_URI}", "https://oauth.vk.com/blank.html")
+                    .replace("{DISPLAY}", "page")
+                    .replace("{API_VERSION}", API_VERSION);
+
+            webEngine.load(reqUrl);
+
+            scene.setRoot(scrollPane);
+
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     private static final String API_VERSION = "5.21";
 
@@ -47,6 +105,10 @@ public final class VkApi {
             auth(appId);
             throw new Error("Need access token");
         }
+    }
+
+    public VkApi() {
+        accessToken = "";
     }
 
     private void auth(String appId) throws IOException {

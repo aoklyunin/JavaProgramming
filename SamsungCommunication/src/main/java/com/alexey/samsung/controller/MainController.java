@@ -1,7 +1,6 @@
 package com.alexey.samsung.controller;
 
 import com.alexey.samsung.DBHelper;
-import com.alexey.samsung.DBHelper2;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,8 +18,6 @@ public class MainController {
         button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                DBHelper dbHelper = new DBHelper();
-                dbHelper.createDB("st2");
             }
         });
     }

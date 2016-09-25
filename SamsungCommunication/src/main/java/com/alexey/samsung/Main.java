@@ -7,6 +7,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
 
 
 public class Main extends Application {
@@ -16,12 +18,32 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        VkHelper.save("303154598",0,1);
+        //vkHelper.save("303154598",0,1);
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("AddressApp");
 
         initRootLayout();
+        try(DBHelper dbHelper = new DBHelper()) {
+            dbHelper.connect();
+            HashMap<String, String> hm = new HashMap<>();
+            hm.put("vals", "tmp");
+            String [][] sArr = {
+                    {"tmp11"},
+                    {"tmp21"},
+                    {"tmp31"}
+            };
+            String [] keys = {
+                DBHelper.KEY_VAL
+            };
+            dbHelper.addRecords(DBHelper.confTable,keys,sArr);
+            dbHelper.getAllConf();
+        }catch(SQLException e){
+            System.out.println("Ошибка работы с базой: "+e);
+        }
+        //VkApi vk = new VkApi();
+        //vk.connect( );
     }
+
 
     public void initRootLayout() {
         try {
@@ -31,15 +53,12 @@ public class Main extends Application {
 
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
-            primaryStage.show();
+            //primaryStage.show();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
-
-
 
     public static void main(String[] args) {
         launch(args);
