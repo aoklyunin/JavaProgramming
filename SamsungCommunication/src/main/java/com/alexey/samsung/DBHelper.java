@@ -3,29 +3,25 @@ package com.alexey.samsung;
 import java.sql.*;
 import java.util.Map;
 
-/**
- * Created by aokly on 24.09.2016.
- */
 public class DBHelper implements AutoCloseable {
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL_OLD = "jdbc:mysql://localhost/";
-    static final String DB_URL = "jdbc:mysql:myDB.db";
+    private static final String DB_NAME = "Students";
+    static final String DB_URL = "jdbc:mysql://localhost/";
 
-    public static final String KEY_VAL = "val";
+    private static final String KEY_VAL = "value";
+    private static final String KEY_CKEY = "ckey";
 
-    //  Database credentials
+
     static final String USER = "root";
     static final String PASS = "toor";
 
     static final String confTable = "CONF_TABLE";
 
     Connection conn = null;
-    Statement stmt = null;
+    Statement  stmt = null;
 
-    public static final String DB_NAME = "Students";
-
-    public void query(String sql) throws SQLException {
+    private void query(String sql) throws SQLException {
         stmt.executeUpdate(sql);
     }
 
@@ -35,7 +31,7 @@ public class DBHelper implements AutoCloseable {
 
     public void connect() throws SQLException, ClassNotFoundException {
         // загружаем класс
-        Class.forName("com.mysql.jdbc.Driver");
+        Class.forName(JDBC_DRIVER);
         // подклюаемся к базе
         conn = DriverManager.getConnection(DB_URL, USER, PASS);
         System.out.println("Подключились к базе");
@@ -50,13 +46,13 @@ public class DBHelper implements AutoCloseable {
             q += e.getKey() + " " + e.getValue() + ", ";
         }
         q += " PRIMARY KEY ( id ))";
-        System.out.println(q);
         query(q);
         System.out.println("Создали таблицу");
     }
+
     // генерация из массива строк sql записей
-    private String getQueryValues(String [][]values){
-        String q=" VALUES ";
+    private String getQueryValues(String[][] values) {
+        String q = " VALUES ";
         for (String[] sArr : values) {
             q += "(";
             for (String key : sArr
@@ -70,6 +66,7 @@ public class DBHelper implements AutoCloseable {
         q += ";";
         return q;
     }
+
     // добавить одну запись с явным указанием ключей через словарь
     public void addRecord(String tableName, Map<String, String> m) throws SQLException {
         String[][] sArr = new String[1][m.size()];
@@ -82,29 +79,33 @@ public class DBHelper implements AutoCloseable {
         addRecords(tableName, keys, sArr);
         System.out.println("Значения добавлены");
     }
+
     // добавить одну запись с явным указанием ключей через массивы
-    public void addRecord(String tableName, String[] keys, String[] values) throws SQLException {
+    private void addRecord(String tableName, String[] keys, String[] values) throws SQLException {
         String[][] sArr = new String[1][];
         sArr[0] = values;
         addRecords(tableName, keys, sArr);
     }
-    // добавить записи с явным указанием ключей 
-    public void addRecords(String tableName, String[] keys, String[][] values) throws SQLException {
+
+    // добавить записи с явным указанием ключей
+    private void addRecords(String tableName, String[] keys, String[][] values) throws SQLException {
         String q = "INSERT INTO " + tableName + "(";
         for (String s : keys) {
             q += s + ", ";
         }
         q = q.substring(0, q.length() - 2);
-        q += ")"+getQueryValues(values);
-        System.out.println(q);
+        q += ")" + getQueryValues(values);
+
         query(q);
     }
+
     // добавить записи без указания ключей
-    public void addRecords(String tableName, String[][] values) throws SQLException {
-        String q = "INSERT INTO " + tableName + " "+getQueryValues(values);
+    private void addRecords(String tableName, String[][] values) throws SQLException {
+        String q = "INSERT INTO " + tableName + " " + getQueryValues(values);
         //System.out.println(q);
         query(q);
     }
+
     // добавить запись без указания ключей
     public void addRecord(String tableName, String[] values) throws SQLException {
         String[][] sArr = new String[1][];
@@ -112,23 +113,60 @@ public class DBHelper implements AutoCloseable {
         addRecords(tableName, sArr);
     }
 
+    // получаем все записи из таблицы конфигураций
     public void getAllConf() throws SQLException {
         String query = "SELECT * FROM " + confTable;
         ResultSet rs = stmt.executeQuery(query);
-        if (!rs.next())
-            System.out.println("Не найдено записей");
+        boolean flgNotFound = true;
         while (rs.next()) {
+            flgNotFound = false;
             //String coffeeName = rs.getString("COF_NAME");
             System.out.println(rs.getString(KEY_VAL));
         }
-    }
-    public static String toSQLString(String s){
-        return "\""+s+"\"";
+        if (flgNotFound) System.out.println("Не найдено ни одной записи");
     }
 
-    
-    public void createConfTable(Map<String, String> m) throws SQLException {
-        createTable(confTable, m);
+    // получить запись по условию
+    private ResultSet getRecord(String condition) throws SQLException {
+        String query = "SELECT * FROM " + confTable + " WHERE " + condition;
+        ResultSet rs = stmt.executeQuery(query);
+        if (rs.next()) {
+            return rs;
+        } else {
+            return null;
+        }
+    }
+
+    // записать значение в базу
+    public void setConfVal(String key, String val)throws SQLException{
+        if (getConfVal(key)==null){
+            String [] keys = {KEY_CKEY,KEY_VAL};
+            String [] sArr = {toSQLString(key),toSQLString(val)};
+            addRecord(confTable,keys,sArr);
+        }else{
+            System.out.println("Запись уже есть");
+            updateRecord(confTable,KEY_CKEY+"=" + toSQLString(key),KEY_VAL+"="+toSQLString(val));
+        }
+    }
+
+    // обновить запись в таблице по условию
+    private void updateRecord(String table, String condition, String operation)throws SQLException{
+        String q = "UPDATE " + table + " SET "+ operation +" WHERE " + condition;
+        query(q);
+    }
+
+    // получить значение из конфигурационной таблицы
+    String getConfVal(String Key) throws SQLException {
+        ResultSet rs = getRecord("ckey=" + toSQLString(Key));
+        if (rs != null)    //String coffeeName = rs.getString("COF_NAME");
+            return rs.getString(KEY_VAL);
+        else
+            return null;
+    }
+
+    // переаод в  SQL строку
+    private static String toSQLString(String s) {
+        return "\'" + s + "\'";
     }
 
     @Override
@@ -137,13 +175,12 @@ public class DBHelper implements AutoCloseable {
         try {
             if (stmt != null)
                 conn.close();
-        } catch (SQLException se) {
+        } catch (SQLException ignored) {
         }// do nothing
         try {
             if (conn != null)
                 conn.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException ignored) {
         }//end finally try
     }
 }

@@ -23,24 +23,7 @@ public class Main extends Application {
         this.primaryStage.setTitle("AddressApp");
 
         initRootLayout();
-        try(DBHelper dbHelper = new DBHelper()) {
-            dbHelper.connect();
-            HashMap<String, String> hm = new HashMap<>();
-            hm.put("vals", "tmp");
-            String [][] sArr = {
-                    {"tmp11"},
-                    {"tmp21"},
-                    {"tmp31"}
-            };
-            String [] keys = {
-                DBHelper.KEY_VAL
-            };
-            dbHelper.addRecords(DBHelper.confTable,keys,sArr);
-            dbHelper.getAllConf();
-        }catch(SQLException e){
-            System.out.println("Ошибка работы с базой: "+e);
-        }
-        //VkApi vk = new VkApi();
+        VkApi vk = new VkApi();
         //vk.connect( );
     }
 

@@ -3,6 +3,7 @@ package com.alexey.samsung;
 /**
  * Created by aokly on 25.09.2016.
  */
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 
@@ -27,56 +29,6 @@ public final class VkApi {
 
     public static final String APP_ID = "5229876";
     public static final String ACCESS_TOKEN = "1f1e0beb1f47d99c4c2f2477f90f589de3cfd096aecb5e91741acf86aa452a0aa48636a3e2a252b1803be";
-
-
-    public void connect(){
-        try {
-            Stage stage = new Stage();
-            stage.setWidth(821);
-            stage.setHeight(643);
-            Scene scene = new Scene(new Group());
-
-            final WebView browser = new WebView();
-            final WebEngine webEngine = browser.getEngine();
-
-            ScrollPane scrollPane = new ScrollPane();
-            scrollPane.setContent(browser);
-
-            webEngine.getLoadWorker().stateProperty()
-                    .addListener(new ChangeListener<Worker.State>() {
-                        @Override
-                        public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
-                            if (newState == Worker.State.SUCCEEDED) {
-                                String url = webEngine.getLocation();
-                                if (url.contains("access_token")) {
-                                    String at = url.substring(url.indexOf("access_token") + 13);
-                                    at = at.substring(1,at.indexOf("&"));
-                                    System.out.println(at);
-                                    if (at.length()!=0)
-                                        stage.close();
-                                }
-                            }
-                        }
-                    });
-            String reqUrl = AUTH_URL
-                    .replace("{APP_ID}", APP_ID)
-                    .replace("{PERMISSIONS}", "photos,messages")
-                    .replace("{REDIRECT_URI}", "https://oauth.vk.com/blank.html")
-                    .replace("{DISPLAY}", "page")
-                    .replace("{API_VERSION}", API_VERSION);
-
-            webEngine.load(reqUrl);
-
-            scene.setRoot(scrollPane);
-
-            stage.setScene(scene);
-            stage.show();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private static final String API_VERSION = "5.21";
 
@@ -97,7 +49,9 @@ public final class VkApi {
         return new VkApi(appId, accessToken);
     }
 
-    private final String accessToken;
+    public static final String KET_AT = "vk_access_token";
+
+    private String accessToken;
 
     private VkApi(String appId, String accessToken) throws IOException {
         this.accessToken = accessToken;
@@ -106,9 +60,84 @@ public final class VkApi {
             throw new Error("Need access token");
         }
     }
+    private boolean checkAccessToken() {
+        try (DBHelper dbHelper = new DBHelper()) {
+            dbHelper.connect();
+            String s = dbHelper.getConfVal(KET_AT);
+            if (s == null)
+                return false;
+            else {
+
+            }
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Ошибка доступа к БД из VKAPI:" + e);
+            return false;
+        } catch (Exception e) {
+            System.out.println("Ошибка из VKAPI:" + e);
+            return false;
+        }
+    }
+
+    private void initAT() {
+        Stage stage = new Stage();
+        stage.setWidth(821);
+        stage.setHeight(643);
+        Scene scene = new Scene(new Group());
+
+        final WebView browser = new WebView();
+        final WebEngine webEngine = browser.getEngine();
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(browser);
+
+        webEngine.getLoadWorker().stateProperty()
+                .addListener((ov, oldState, newState) -> {
+                    if (newState == Worker.State.SUCCEEDED) {
+                        String url = webEngine.getLocation();
+                        if (url.contains("access_token")) {
+                            accessToken = url.substring(url.indexOf("access_token") + 13);
+                            accessToken = accessToken.substring(1, accessToken.indexOf("&"));
+                            if (accessToken.length() != 0) {
+                                stage.close();
+                                try (DBHelper dbHelper = new DBHelper()) {
+                                    dbHelper.connect();
+                                    dbHelper.setConfVal(KET_AT,accessToken);
+                                    successVk();
+                                }catch (SQLException e){
+                                    System.out.println("Ошибка доступа к БД");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                });
+        String reqUrl = AUTH_URL
+                .replace("{APP_ID}", APP_ID)
+                .replace("{PERMISSIONS}", "photos,messages")
+                .replace("{REDIRECT_URI}", "https://oauth.vk.com/blank.html")
+                .replace("{DISPLAY}", "page")
+                .replace("{API_VERSION}", API_VERSION);
+
+        webEngine.load(reqUrl);
+
+        scene.setRoot(scrollPane);
+
+        stage.setScene(scene);
+        stage.show();
+    }
 
     public VkApi() {
-        accessToken = "";
+        if (checkAccessToken()) {
+            successVk();
+        } else {
+            initAT();
+        }
+    }
+
+    public void successVk() {
+        System.out.println("Connection is success establish: " + accessToken);
     }
 
     private void auth(String appId) throws IOException {
