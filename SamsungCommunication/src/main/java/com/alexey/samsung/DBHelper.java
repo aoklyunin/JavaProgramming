@@ -47,6 +47,22 @@ public class DBHelper implements AutoCloseable {
         query("CREATE DATABASE " + dbName);
     }
 
+    public ArrayList<ArrayList<String>> getValsRegister() throws SQLException {
+        String query = "SELECT * FROM " + TABLE_SCOOLERS;
+        ResultSet rs = stmt.executeQuery(query);
+        //String login,String password, String name, String mail
+        ArrayList<ArrayList<String>> lst = new ArrayList<>();
+        while (rs.next()) {
+            ArrayList<String> ls = new ArrayList<>();
+            lst.add(ls);
+            ls.add(rs.getString(KEY_M_LOGIN));
+            ls.add(rs.getString(KEY_M_PASSWORD));
+            ls.add(rs.getString(KEY_NAME));
+            ls.add(rs.getString(KEY_MAIL));
+        }
+        return  lst;
+    }
+
     public void connect() throws SQLException, ClassNotFoundException {
         // загружаем класс
         Class.forName(JDBC_DRIVER);
@@ -155,9 +171,9 @@ public class DBHelper implements AutoCloseable {
         }
     }
 
-    public void parceCsv()throws SQLException   {
+    public void parceCsv() throws SQLException {
         try (BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(getClass().getResourceAsStream("/source/FirstForm.csv")))){
+                new InputStreamReader(getClass().getResourceAsStream("/source/FirstForm.csv")))) {
             String commandstring;
             ArrayList<ArrayList<String>> sList = new ArrayList<>();
             while ((commandstring = bufferedReader.readLine()) != null) {
@@ -172,22 +188,22 @@ public class DBHelper implements AutoCloseable {
                 }
             }
             int size1 = sList.size();
-            int size2 = sList.get(1).size()-1;
+            int size2 = sList.get(1).size() - 1;
             String sArr[][] = new String[size1][size2];
             for (int i = 0; i < size1; i++) {
-                sArr[i]=new String[size2];
+                sArr[i] = new String[size2];
                 for (int j = 0; j < size2; j++) {
-                    sArr[i][j] = sList.get(i).get(j+1);
+                    sArr[i][j] = sList.get(i).get(j + 1);
                 }
             }
 
-            String kArr[] ={
-                KEY_GITHUB, KEY_M_LOGIN, KEY_M_PASSWORD, KEY_NAME, KEY_MAIL,KEY_VK,KEY_TEL
+            String kArr[] = {
+                    KEY_GITHUB, KEY_M_LOGIN, KEY_M_PASSWORD, KEY_NAME, KEY_MAIL, KEY_VK, KEY_TEL
             };
-            addRecords(TABLE_SCOOLERS,kArr,sArr);
-            for (int i = 0; i <size1 ; i++) {
-                for (int j = 0; j <size2 ; j++) {
-                    System.out.print(sArr[i][j]+" ");
+            addRecords(TABLE_SCOOLERS, kArr, sArr);
+            for (int i = 0; i < size1; i++) {
+                for (int j = 0; j < size2; j++) {
+                    System.out.print(sArr[i][j] + " ");
                 }
                 System.out.println();
             }

@@ -26,9 +26,11 @@ public class Main extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("AddressApp");
 
-        initRootLayout();
-        DBHelper dbHelper= new DBHelper();
-        dbHelper.connect();
+        //initRootLayout();
+        //DBHelper dbHelper= new DBHelper();
+       // dbHelper.connect();
+        //WebSelenium.test();
+        System.out.println("Completed");
     }
 
 
