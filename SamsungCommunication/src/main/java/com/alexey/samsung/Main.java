@@ -11,8 +11,6 @@ import java.io.IOException;
 // TODO: 25.09.2016  Нужно кнопку VK скрыть и открывать только когда подключение сделано
 // http://stackoverflow.com/questions/30308065/changing-the-text-of-a-label-from-a-different-class-in-javafx
 
-
-
 public class Main extends Application {
 
     private Stage primaryStage;
@@ -22,20 +20,24 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         //vkHelper.save("303154598",0,1);
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("AddressApp");
+        this.primaryStage.setTitle("SamsungCommunication");
 
-        //initRootLayout();
-       // DBHelper dbHelper= new DBHelper();
-       // dbHelper.connect();
+        CustomOperations.getUnregistredYsersFromConf();
+        initRootLayout();
+        //DBHelper dbHelper= new DBHelper();
+        //dbHelper.connect();
+        //dbHelper.parceMailList();
       //  dbHelper.parceCsv();
         //WebSelenium.test();
-        GMailSender sender = new GMailSender("aoklyunin@gmail.com", "aoklyunin1990");
+       /* GMailSender sender = new GMailSender("aoklyunin@gmail.com", "aoklyunin1990");
         sender.sendMail("Тестовое письмо",
                 "Тестовое письмо\nВнезапно мдааааа",
                 "aoklyunin@gmail.com",
                 "aoklyunin@gmail.com");
 
-        System.out.println("Completed");
+        System.out.println("Completed");*/
+        //vk = new VkApi();
+
     }
 
 

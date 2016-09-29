@@ -4,6 +4,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,16 +20,16 @@ public class DBHelper implements AutoCloseable {
 
     public static final String TABLE_SCOOLERS = "schoolers";
 
-    private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_MAIL = "mail";
-    private static final String KEY_VK = "vk";
-    private static final String KEY_GITHUB = "github";
-    private static final String KEY_M_LOGIN = "mlogin";
-    private static final String KEY_M_PASSWORD = "mpassword";
-    private static final String KEY_TEL = "tel";
-    private static final String KEY_ADDITIONAL = "additional";
-    private static final String KEY_PROJECT = "project";
+     static final String KEY_ID = "id";
+     static final String KEY_NAME = "name";
+     static final String KEY_MAIL = "mail";
+     static final String KEY_VK = "vk";
+     static final String KEY_GITHUB = "github";
+     static final String KEY_M_LOGIN = "mlogin";
+     static final String KEY_M_PASSWORD = "mpassword";
+     static final String KEY_TEL = "tel";
+     static final String KEY_ADDITIONAL = "additional";
+     static final String KEY_PROJECT = "project";
 
 
     static final String USER = "root";
@@ -40,6 +41,7 @@ public class DBHelper implements AutoCloseable {
     Statement stmt = null;
 
     private void query(String sql) throws SQLException {
+        //System.out.println(sql);
         stmt.executeUpdate(sql);
     }
 
@@ -162,7 +164,7 @@ public class DBHelper implements AutoCloseable {
 
     // получить запись по условию
     private ResultSet getRecord(String condition, String tableName) throws SQLException {
-        String q= "SELECT * FROM " + tableName + " WHERE " + condition;
+        String q = "SELECT * FROM " + tableName + " WHERE " + condition;
         //System.out.println(q);
         ResultSet rs = stmt.executeQuery(q);
         if (rs.next()) {
@@ -172,8 +174,32 @@ public class DBHelper implements AutoCloseable {
         }
     }
 
+
+
+    public ArrayList<HashMap<String,String>>  getStudentRecs() throws SQLException {
+        String q = "SELECT * FROM " + TABLE_SCOOLERS;
+        //System.out.println(q);
+        ResultSet rs = stmt.executeQuery(q);
+        ArrayList<HashMap<String,String>> lst = new ArrayList<>();
+        while (rs.next()) {
+            HashMap<String,String> hm = new HashMap<>();
+            lst.add(hm);
+            hm.put(KEY_GITHUB,rs.getString(KEY_GITHUB));
+            hm.put(KEY_M_LOGIN,rs.getString(KEY_M_LOGIN));
+            hm.put(KEY_M_PASSWORD,rs.getString(KEY_M_PASSWORD));
+            hm.put(KEY_NAME,rs.getString(KEY_NAME));
+            hm.put(KEY_VK,rs.getString(KEY_VK));
+            hm.put(KEY_TEL,rs.getString(KEY_TEL));
+        }
+        return lst;
+    }
+
     public boolean chechStudentRecordByMail(String mail) throws SQLException {
         return (getRecord("mail=" + toSQLString(mail), TABLE_SCOOLERS) != null);
+    }
+
+    public boolean chechStudentRecordByVK(String mail) throws SQLException {
+        return (getRecord("vk=" + toSQLString(mail), TABLE_SCOOLERS) != null);
     }
 
     public void checkMails() throws SQLException {
@@ -189,6 +215,42 @@ public class DBHelper implements AutoCloseable {
             e.printStackTrace();
         }
 
+    }
+
+    // просматриваем список всех адресов почты, и на те, которых в базе нет
+    // отправляется предупредительное письмо
+    public void parceMailList() throws Exception {
+        try (BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(getClass().getResourceAsStream("/source/mails.txt")))) {
+            String commandstring;
+            ArrayList<ArrayList<String>> sList = new ArrayList<>();
+            GMailSender sender = new GMailSender("aoklyunin@gmail.com", "aoklyunin1990");
+            String subject = "Обучение в IT школе Samsung";
+            String body = "Уважаемый Учащийся,\n\n" +
+                    "Вы до сих пор не заполнили гугл-форму. Если до конца недели Вы" +
+                    " не заполните её, я буду вынужден отчислить Вас, т.к. из-за незаполненной формы Вы " +
+                    "не можете выполнять задания.\n\n" +
+                    "С уважением, \n Алексей Клюнин";
+            while ((commandstring = bufferedReader.readLine()) != null) {
+                try {
+                    if (!chechStudentRecordByMail(commandstring.replace(" ", ""))) {
+
+                        sender.sendMail(subject,
+                                        body,
+                                        "aoklyunin@gmail.com",
+                                        commandstring);
+                        System.out.println(commandstring);
+                    }
+                } catch (SQLException e) {
+                    System.out.println("SQL Ошибка " + e);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Fuck");
+        }
+        System.out.println("eagasg");
+        // Questions.generateVariants();
     }
 
     public void parceCsv() throws SQLException {
@@ -210,15 +272,15 @@ public class DBHelper implements AutoCloseable {
                     String tmp = matcher.group();
                     //System.out.println(tmp);
                     sl.add(tmp);
-                    if (i==5){
+                    if (i == 5) {
                         //System.out.println(tmp);
                         try {
-                            if (!chechStudentRecordByMail(tmp.replace("\"","").replace(" ",""))) {
+                            if (!chechStudentRecordByMail(tmp.replace("\"", "").replace(" ", ""))) {
                                 System.out.println("Не найдено");
                                 flgAdd = true;
                             }
-                        }catch (SQLException e){
-                            System.out.println("SQL Ошибка "+e);
+                        } catch (SQLException e) {
+                            System.out.println("SQL Ошибка " + e);
                         }
                     }
                     i++;
@@ -227,19 +289,19 @@ public class DBHelper implements AutoCloseable {
                 cnt++;
 
 
-                if (flgAdd){
+                if (flgAdd) {
                     sList.add(sl);
                 }
             }
             //System.out.println(cnt);
-            if(sList.size()>0) {
+            if (sList.size() > 0) {
                 int size1 = sList.size();
                 int size2 = sList.get(0).size() - 1;
                 String sArr[][] = new String[size1][size2];
                 for (int i = 0; i < size1; i++) {
                     sArr[i] = new String[size2];
                     for (int j = 0; j < size2; j++) {
-                        sArr[i][j] = sList.get(i).get(j + 1).replace(" ","");
+                        sArr[i][j] = sList.get(i).get(j + 1).replace(" ", "");
                     }
                 }
 
@@ -276,7 +338,7 @@ public class DBHelper implements AutoCloseable {
     }
 
     // обновить запись в таблице по условию
-    private void updateRecord(String table, String condition, String operation) throws SQLException {
+    void updateRecord(String table, String condition, String operation) throws SQLException {
         String q = "UPDATE " + table + " SET " + operation + " WHERE " + condition;
         query(q);
     }
@@ -291,7 +353,7 @@ public class DBHelper implements AutoCloseable {
     }
 
     // переаод в  SQL строку
-    private static String toSQLString(String s) {
+    public static String toSQLString(String s) {
         return "\'" + s + "\'";
     }
 

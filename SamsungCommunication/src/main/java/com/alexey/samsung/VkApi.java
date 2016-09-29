@@ -139,6 +139,11 @@ public final class VkApi implements AutoCloseable {
         }
     }
 
+    public String getUsersFromGroup(String groupId) throws IOException {
+        return invokeApi("groups.getMembers", Params.create()
+                .add("group_id", groupId));
+    }
+
     private void successVk() {
         System.out.println("Connection is success establish: ");
      }
@@ -169,6 +174,10 @@ public final class VkApi implements AutoCloseable {
                 .add("rev", rev ? "1" : "0"));
     }
 
+    String getUserInform(String userId) throws IOException {
+        return invokeApi("users.get", Params.create()
+                .add("user_ids", userId));
+    }
     public String getAlbums(String userId) throws IOException {
         return invokeApi("photos.getAlbums", Params.create()
                 .add("owner_id", userId)

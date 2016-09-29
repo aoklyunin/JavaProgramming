@@ -14,6 +14,9 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/SamsungCommunication$Main.coverage" NAME="Main Coverage Results" MODIFIED="1475152433453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
@@ -34,18 +37,40 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="79">
-              <caret line="21" column="16" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
+            <state relative-caret-position="158">
+              <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GMailSender.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="CustomOperations.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/CustomOperations.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JSONObject.class" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar!/org/json/simple/JSONObject.class">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="59" column="25" selection-start-line="59" selection-start-column="25" selection-end-line="59" selection-end-column="25" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GMailSender.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/GMailSender.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="527">
-              <caret line="62" column="27" selection-start-line="62" selection-start-column="27" selection-end-line="62" selection-end-column="27" />
+            <state relative-caret-position="157">
+              <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3751#3752#0" expanded="true" />
@@ -57,11 +82,45 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="DBHelper.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/DBHelper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="233">
+              <caret line="43" column="10" selection-start-line="43" selection-start-column="10" selection-end-line="43" selection-end-column="10" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="method#getQueryValues#0;class#DBHelper#0" expanded="false" />
+                <element signature="e#13391#13392#0" expanded="true" />
+                <element signature="e#13429#13430#0" expanded="true" />
+                <marker date="1475158974838" expanded="true" signature="1674:1688" ph="SELECT * FRO... CONF_TABLE" />
+                <marker date="1475158974838" expanded="true" signature="5308:5322" ph="SELECT * FRO... CONF_TABLE" />
+                <marker date="1475158974838" expanded="true" signature="5834:5872" ph="SELECT * FRO... CONF_TABLE" />
+                <marker date="1475158974838" expanded="true" signature="6179:6193" ph="SELECT * FRO... schoolers" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VkApi.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/VkApi.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="209">
+              <caret line="141" column="35" selection-start-line="141" selection-start-column="18" selection-end-line="141" selection-end-column="35" />
+              <folding>
+                <element signature="method#with#0;class#VkApi#0" expanded="false" />
+                <element signature="method#VkApi#0;class#VkApi#0" expanded="false" />
+                <element signature="method#checkAccessToken#0;class#VkApi#0" expanded="false" />
+                <element signature="method#initAT#0;class#VkApi#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1360">
-              <caret line="80" column="20" selection-start-line="80" selection-start-column="20" selection-end-line="80" selection-end-column="20" />
+            <state relative-caret-position="354">
+              <caret line="80" column="40" selection-start-line="80" selection-start-column="40" selection-end-line="80" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -98,18 +157,19 @@
         <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/Web.java" />
         <option value="$PROJECT_DIR$/src/main/resources/fxml/web.fxml" />
         <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/VKView.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/VkApi.java" />
         <option value="$PROJECT_DIR$/src/main/resources/fxml/hello.fxml" />
         <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/controller/MainController.java" />
         <option value="$PROJECT_DIR$/src/main/resources/source/FirstForm.csv" />
         <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/WebSelenium.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/DBHelper.java" />
         <option value="$PROJECT_DIR$/src/main/resources/source/form.csv" />
         <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/MimeMessage.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/Mail.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/Main.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/GMailSender.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/VkApi.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/DBHelper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/alexey/samsung/CustomOperations.java" />
       </list>
     </option>
   </component>
@@ -225,88 +285,6 @@
               <option name="myItemId" value="main" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="source" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SamsungCommunication" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SamsungCommunication" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SamsungCommunication" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SamsungCommunication" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fxml" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SamsungCommunication" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SamsungCommunication" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="samsung" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
@@ -326,19 +304,19 @@
     <property name="settings.editor.splitter.proportion" value="0.2" />
   </component>
   <component name="RecentsManager">
-    <key name="CreateClassDialog.RecentsKey">
-      <recent name="com.alexey.samsung" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Programming\JavaProgramming\SamsungCommunication\src\main\resources\source" />
-      <recent name="C:\Programming\JavaProgramming\SamsungCom\src\main\resources\img" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Programming\JavaProgramming\SamsungCommunication\src\main\resources\source" />
       <recent name="C:\Programming\JavaProgramming\SamsungCommunication" />
       <recent name="C:\Programming\JavaProgramming\SamsungCommunication\src\main\resources" />
       <recent name="C:\Programming\JavaProgramming\SamsungCommunication\src\main\resources\db" />
       <recent name="C:\Programming\JavaProgramming\SamsungCom\src\main\resources\img" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Programming\JavaProgramming\SamsungCommunication\src\main\resources\source" />
+      <recent name="C:\Programming\JavaProgramming\SamsungCom\src\main\resources\img" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.alexey.samsung" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Main">
@@ -833,12 +811,12 @@
       <workItem from="1474870532290" duration="1672000" />
       <workItem from="1474900047738" duration="339000" />
       <workItem from="1475143234298" duration="6263000" />
-      <workItem from="1475150460775" duration="905000" />
+      <workItem from="1475150460775" duration="10177000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="54864000" />
+    <option name="totallyTimeSpent" value="64136000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="54" y="-8" width="1320" height="784" extended-state="6" />
@@ -850,13 +828,14 @@
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18865031" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18865031" sideWeight="0.49335864" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21810089" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21661721" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18865031" sideWeight="0.5066414" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25153375" sideWeight="0.49301398" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2208589" sideWeight="0.49301398" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -920,22 +899,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/DBHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#getQueryValues#0;class#DBHelper#0" expanded="false" />
-            <element signature="method#updateRecord#0;class#DBHelper#0" expanded="false" />
-            <marker date="1475146843862" expanded="true" signature="1683:1697" ph="SELECT * FRO... CONF_TABLE" />
-            <marker date="1475146843862" expanded="true" signature="5317:5331" ph="SELECT * FRO... CONF_TABLE" />
-            <marker date="1475146843862" expanded="true" signature="5842:5880" ph="SELECT * FRO... CONF_TABLE" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/DBHelper2.java" />
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="561">
@@ -980,10 +943,12 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#getQueryValues#0;class#DBHelper#0" expanded="false" />
-            <element signature="method#updateRecord#0;class#DBHelper#0" expanded="false" />
-            <marker date="1475146843862" expanded="true" signature="1683:1697" ph="SELECT * FRO... CONF_TABLE" />
-            <marker date="1475146843862" expanded="true" signature="5317:5331" ph="SELECT * FRO... CONF_TABLE" />
-            <marker date="1475146843862" expanded="true" signature="5842:5880" ph="SELECT * FRO... CONF_TABLE" />
+            <element signature="e#13391#13392#0" expanded="true" />
+            <element signature="e#13429#13430#0" expanded="true" />
+            <marker date="1475158974838" expanded="true" signature="1674:1688" ph="SELECT * FRO... CONF_TABLE" />
+            <marker date="1475158974838" expanded="true" signature="5308:5322" ph="SELECT * FRO... CONF_TABLE" />
+            <marker date="1475158974838" expanded="true" signature="5834:5872" ph="SELECT * FRO... CONF_TABLE" />
+            <marker date="1475158974838" expanded="true" signature="6179:6193" ph="SELECT * FRO... schoolers" />
           </folding>
         </state>
       </provider>
@@ -1033,10 +998,12 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#getQueryValues#0;class#DBHelper#0" expanded="false" />
-            <element signature="method#updateRecord#0;class#DBHelper#0" expanded="false" />
-            <marker date="1475146843862" expanded="true" signature="1683:1697" ph="SELECT * FRO... CONF_TABLE" />
-            <marker date="1475146843862" expanded="true" signature="5317:5331" ph="SELECT * FRO... CONF_TABLE" />
-            <marker date="1475146843862" expanded="true" signature="5842:5880" ph="SELECT * FRO... CONF_TABLE" />
+            <element signature="e#13391#13392#0" expanded="true" />
+            <element signature="e#13429#13430#0" expanded="true" />
+            <marker date="1475158974838" expanded="true" signature="1674:1688" ph="SELECT * FRO... CONF_TABLE" />
+            <marker date="1475158974838" expanded="true" signature="5308:5322" ph="SELECT * FRO... CONF_TABLE" />
+            <marker date="1475158974838" expanded="true" signature="5834:5872" ph="SELECT * FRO... CONF_TABLE" />
+            <marker date="1475158974838" expanded="true" signature="6179:6193" ph="SELECT * FRO... schoolers" />
           </folding>
         </state>
       </provider>
@@ -1144,24 +1111,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/VkApi.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="143" column="1" selection-start-line="143" selection-start-column="1" selection-end-line="143" selection-end-column="1" />
-          <folding>
-            <element signature="method#with#0;class#VkApi#0" expanded="false" />
-            <element signature="method#VkApi#0;class#VkApi#0" expanded="false" />
-            <element signature="method#checkAccessToken#0;class#VkApi#0" expanded="false" />
-            <element signature="method#initAT#0;class#VkApi#0" expanded="false" />
-            <element signature="e#4839#4840#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_71/src.zip!/java/util/ArrayList.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="157">
           <caret line="428" column="0" selection-start-line="428" selection-start-column="0" selection-end-line="428" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1173,21 +1127,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/DBHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
-          <caret line="241" column="76" selection-start-line="241" selection-start-column="76" selection-end-line="241" selection-end-column="76" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#getQueryValues#0;class#DBHelper#0" expanded="false" />
-            <element signature="method#updateRecord#0;class#DBHelper#0" expanded="false" />
-            <marker date="1475146843862" expanded="true" signature="1683:1697" ph="SELECT * FRO... CONF_TABLE" />
-            <marker date="1475146843862" expanded="true" signature="5317:5331" ph="SELECT * FRO... CONF_TABLE" />
-            <marker date="1475146843862" expanded="true" signature="5842:5880" ph="SELECT * FRO... CONF_TABLE" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/source/form.csv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="337">
@@ -1196,32 +1135,80 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/MimeMessage.java" />
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1360">
-          <caret line="80" column="20" selection-start-line="80" selection-start-column="20" selection-end-line="80" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="79">
-          <caret line="21" column="16" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/GMailSender.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="62" column="27" selection-start-line="62" selection-start-column="27" selection-end-line="62" selection-end-column="27" />
+        <state relative-caret-position="157">
+          <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3751#3752#0" expanded="true" />
             <element signature="e#3791#3792#0" expanded="true" />
             <element signature="e#4132#4133#0" expanded="true" />
             <element signature="e#4184#4185#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="354">
+          <caret line="80" column="40" selection-start-line="80" selection-start-column="40" selection-end-line="80" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar!/org/json/simple/JSONObject.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="59" column="25" selection-start-line="59" selection-start-column="25" selection-end-line="59" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/VkApi.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="141" column="35" selection-start-line="141" selection-start-column="18" selection-end-line="141" selection-end-column="35" />
+          <folding>
+            <element signature="method#with#0;class#VkApi#0" expanded="false" />
+            <element signature="method#VkApi#0;class#VkApi#0" expanded="false" />
+            <element signature="method#checkAccessToken#0;class#VkApi#0" expanded="false" />
+            <element signature="method#initAT#0;class#VkApi#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/DBHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="43" column="10" selection-start-line="43" selection-start-column="10" selection-end-line="43" selection-end-column="10" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#getQueryValues#0;class#DBHelper#0" expanded="false" />
+            <element signature="e#13391#13392#0" expanded="true" />
+            <element signature="e#13429#13430#0" expanded="true" />
+            <marker date="1475158974838" expanded="true" signature="1674:1688" ph="SELECT * FRO... CONF_TABLE" />
+            <marker date="1475158974838" expanded="true" signature="5308:5322" ph="SELECT * FRO... CONF_TABLE" />
+            <marker date="1475158974838" expanded="true" signature="5834:5872" ph="SELECT * FRO... CONF_TABLE" />
+            <marker date="1475158974838" expanded="true" signature="6179:6193" ph="SELECT * FRO... schoolers" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="158">
+          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/alexey/samsung/CustomOperations.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
