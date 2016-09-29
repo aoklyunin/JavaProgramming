@@ -7,8 +7,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.HashMap;
 
 // TODO: 25.09.2016  Нужно кнопку VK скрыть и открывать только когда подключение сделано
 // http://stackoverflow.com/questions/30308065/changing-the-text-of-a-label-from-a-different-class-in-javafx
@@ -27,9 +25,16 @@ public class Main extends Application {
         this.primaryStage.setTitle("AddressApp");
 
         //initRootLayout();
-        //DBHelper dbHelper= new DBHelper();
+       // DBHelper dbHelper= new DBHelper();
        // dbHelper.connect();
+      //  dbHelper.parceCsv();
         //WebSelenium.test();
+        GMailSender sender = new GMailSender("aoklyunin@gmail.com", "aoklyunin1990");
+        sender.sendMail("Тестовое письмо",
+                "Тестовое письмо\nВнезапно мдааааа",
+                "aoklyunin@gmail.com",
+                "aoklyunin@gmail.com");
+
         System.out.println("Completed");
     }
 

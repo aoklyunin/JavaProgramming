@@ -60,7 +60,7 @@ public class DBHelper implements AutoCloseable {
             ls.add(rs.getString(KEY_NAME));
             ls.add(rs.getString(KEY_MAIL));
         }
-        return  lst;
+        return lst;
     }
 
     public void connect() throws SQLException, ClassNotFoundException {
@@ -161,9 +161,10 @@ public class DBHelper implements AutoCloseable {
     }
 
     // получить запись по условию
-    private ResultSet getRecord(String condition) throws SQLException {
-        String query = "SELECT * FROM " + confTable + " WHERE " + condition;
-        ResultSet rs = stmt.executeQuery(query);
+    private ResultSet getRecord(String condition, String tableName) throws SQLException {
+        String q= "SELECT * FROM " + tableName + " WHERE " + condition;
+        //System.out.println(q);
+        ResultSet rs = stmt.executeQuery(q);
         if (rs.next()) {
             return rs;
         } else {
@@ -171,41 +172,87 @@ public class DBHelper implements AutoCloseable {
         }
     }
 
+    public boolean chechStudentRecordByMail(String mail) throws SQLException {
+        return (getRecord("mail=" + toSQLString(mail), TABLE_SCOOLERS) != null);
+    }
+
+    public void checkMails() throws SQLException {
+        try (BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(getClass().getResourceAsStream("/source/mails.txt")))) {
+            String commandstring;
+            while ((commandstring = bufferedReader.readLine()) != null) {
+                if (chechStudentRecordByMail(commandstring)) {
+                    System.out.println(commandstring);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void parceCsv() throws SQLException {
         try (BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(getClass().getResourceAsStream("/source/FirstForm.csv")))) {
+                new InputStreamReader(getClass().getResourceAsStream("/source/form.csv")))) {
             String commandstring;
             ArrayList<ArrayList<String>> sList = new ArrayList<>();
+            int cnt = 0;
             while ((commandstring = bufferedReader.readLine()) != null) {
                 String ls_regex = "\".*?\"";
                 Pattern pattern = Pattern.compile(ls_regex);
                 Matcher matcher = pattern.matcher(commandstring);
                 ArrayList<String> sl = new ArrayList<>();
-                sList.add(sl);
+
+                int i = 0;
+
+                boolean flgAdd = false;
                 while (matcher.find()) {
                     String tmp = matcher.group();
+                    //System.out.println(tmp);
                     sl.add(tmp);
-                }
-            }
-            int size1 = sList.size();
-            int size2 = sList.get(1).size() - 1;
-            String sArr[][] = new String[size1][size2];
-            for (int i = 0; i < size1; i++) {
-                sArr[i] = new String[size2];
-                for (int j = 0; j < size2; j++) {
-                    sArr[i][j] = sList.get(i).get(j + 1);
-                }
-            }
+                    if (i==5){
+                        //System.out.println(tmp);
+                        try {
+                            if (!chechStudentRecordByMail(tmp.replace("\"","").replace(" ",""))) {
+                                System.out.println("Не найдено");
+                                flgAdd = true;
+                            }
+                        }catch (SQLException e){
+                            System.out.println("SQL Ошибка "+e);
+                        }
+                    }
+                    i++;
 
-            String kArr[] = {
-                    KEY_GITHUB, KEY_M_LOGIN, KEY_M_PASSWORD, KEY_NAME, KEY_MAIL, KEY_VK, KEY_TEL
-            };
-            addRecords(TABLE_SCOOLERS, kArr, sArr);
-            for (int i = 0; i < size1; i++) {
-                for (int j = 0; j < size2; j++) {
-                    System.out.print(sArr[i][j] + " ");
                 }
-                System.out.println();
+                cnt++;
+
+
+                if (flgAdd){
+                    sList.add(sl);
+                }
+            }
+            //System.out.println(cnt);
+            if(sList.size()>0) {
+                int size1 = sList.size();
+                int size2 = sList.get(0).size() - 1;
+                String sArr[][] = new String[size1][size2];
+                for (int i = 0; i < size1; i++) {
+                    sArr[i] = new String[size2];
+                    for (int j = 0; j < size2; j++) {
+                        sArr[i][j] = sList.get(i).get(j + 1).replace(" ","");
+                    }
+                }
+
+                String kArr[] = {
+                        KEY_GITHUB, KEY_M_LOGIN, KEY_M_PASSWORD, KEY_NAME, KEY_MAIL, KEY_VK, KEY_TEL
+                };
+                addRecords(TABLE_SCOOLERS, kArr, sArr);
+                for (int i = 0; i < size1; i++) {
+                    for (int j = 0; j < size2; j++) {
+                        System.out.print(sArr[i][j] + " ");
+                    }
+                    System.out.println();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -236,7 +283,7 @@ public class DBHelper implements AutoCloseable {
 
     // получить значение из конфигурационной таблицы
     String getConfVal(String Key) throws SQLException {
-        ResultSet rs = getRecord("ckey=" + toSQLString(Key));
+        ResultSet rs = getRecord("ckey=" + toSQLString(Key), confTable);
         if (rs != null)    //String coffeeName = rs.getString("COF_NAME");
             return rs.getString(KEY_VAL);
         else
