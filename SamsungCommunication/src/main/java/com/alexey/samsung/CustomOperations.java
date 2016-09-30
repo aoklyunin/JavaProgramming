@@ -13,6 +13,28 @@ import java.util.Map;
  * Created by aokly on 29.09.2016.
  */
 public class CustomOperations {
+
+    public static void registerUserMdl() throws InterruptedException {
+        WebSelenium  webSelenium = new WebSelenium();
+        webSelenium.loginToMdl();
+        Thread.sleep(1000);
+
+        DBHelper dbHelper = new DBHelper();
+        try {
+            dbHelper.connect();
+            ArrayList<ArrayList<String>>  lst = dbHelper.getValsRegister();
+            for (ArrayList<String> ls:lst){
+                webSelenium.fillAddUserPage(ls);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //fillPage("asf1","asfasf2","asfas fa2","asasfasf@asg.rt");
+
+    }
     // преобразование разных записей vk в id
     public static void modifyVK() throws SQLException, ClassNotFoundException {
         VkApi vk = new VkApi();
@@ -78,6 +100,13 @@ public class CustomOperations {
 
     }
 
+    public static void getAttemps() throws Exception {
+        try(WebSelenium webSelenium = new WebSelenium()) {
+            webSelenium.loginToMdl();
+            Thread.sleep(1000);
+            webSelenium.getAttempts("02_Ведение в Java");
+        }
+    }
 }
 
 

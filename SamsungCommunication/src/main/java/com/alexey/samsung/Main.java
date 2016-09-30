@@ -22,13 +22,16 @@ public class Main extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("SamsungCommunication");
 
-        CustomOperations.getUnregistredYsersFromConf();
+        //CustomOperations.getUnregistredYsersFromConf();
         initRootLayout();
         //DBHelper dbHelper= new DBHelper();
         //dbHelper.connect();
+        //dbHelper.parceCsv();
+
         //dbHelper.parceMailList();
       //  dbHelper.parceCsv();
-        //WebSelenium.test();
+        CustomOperations.getAttemps();
+        System.out.println("Complete");
        /* GMailSender sender = new GMailSender("aoklyunin@gmail.com", "aoklyunin1990");
         sender.sendMail("Тестовое письмо",
                 "Тестовое письмо\nВнезапно мдааааа",
