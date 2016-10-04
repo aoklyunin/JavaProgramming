@@ -2,14 +2,17 @@ package com.alexey.samsung;
 
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntPredicate;
 
 
 /**
@@ -63,15 +66,107 @@ public class WebSelenium implements AutoCloseable {
         driver.quit();
     }
 
-    public ArrayList<WebElement> getAList(List<WebElement> l){
+    public ArrayList<WebElement> getAList(List<WebElement> l) {
 
         ArrayList<WebElement> al = new ArrayList<>();
-        for (WebElement w:l){
+        for (WebElement w : l) {
             al.add(w);
-           // System.out.println(w);
+            // System.out.println(w);
         }
-        return  al;
+        return al;
     }
+    // from - value соответствуещего пункта select'a для выбора "откуда"
+    // to - value соответствуещего пункта select'a для выбора "куда"
+    // ip  - лямбда выражение для выбора, какие пункты надо копировать
+    public void moveCopiedQuestions(String from, String to, IntPredicate ip) throws InterruptedException {
+        // выбираем, куда будем переносить
+        driver.get("http://mdl.sch239.net/question/edit.php?courseid=44&cat=558%2C1&qpage=0&recurse=1&showhidden=1&qbshowtext=0");
+
+        Thread.sleep(100);
+        // выбираем, откуда будем переносить
+        WebElement qselectElem = driver.findElement(By.tagName("select"));
+        Select qselect = new Select(qselectElem);
+        qselect.selectByValue(from);
+        Thread.sleep(100);
+        qselectElem = driver.findElement(By.id("menucategory"));
+        qselect = new Select(qselectElem);
+        qselect.selectByValue(to);
+
+
+        //*[@id="single_select57f3c955e54454"]
+       // Thread.sleep(1000);
+        //driver.get(path);
+       // Thread.sleep(1500);
+
+        WebElement table = driver.findElement(By.id("categoryquestions"));
+        List<WebElement> ql = table.findElements(By.tagName("tr"));
+
+        int i=0;
+        for (WebElement q : ql) {
+            List<WebElement> tdList = q.findElements(By.tagName("td"));
+            if (tdList.size() != 0) {
+                ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
+                if(ip.test(i)){
+                    try {
+                        tds.get(0).findElement(By.tagName("input")).click();
+                        //System.out.println(tds.get(0));
+                    }catch (Exception e){
+                        System.out.println("error"+from);
+                    }
+                }
+            }
+            i++;
+        }
+        System.out.println("Checked");
+        Thread.sleep(100);
+        driver.findElement(By.xpath("//input[@name=\"move\"]")).click();
+        //Thread.sleep(60000);
+
+    }
+
+    // qName - value соответствуещего пункта select'a
+    public void copyQuestion(String qName) throws InterruptedException {
+        driver.get("http://mdl.sch239.net/question/edit.php?courseid=44&cat=558%2C1&qpage=0&recurse=1&showhidden=1&qbshowtext=0");
+        WebElement qselectElem = driver.findElement(By.tagName("select"));
+        Select qselect = new Select(qselectElem);
+        qselect.selectByValue(qName);
+        //*[@id="single_select57f3c955e54454"]
+
+        //driver.get(path);
+        WebElement table = driver.findElement(By.id("categoryquestions"));
+        List<WebElement> ql = table.findElements(By.tagName("tr"));
+        ArrayList<String> qLinks = new ArrayList<>();
+        Thread.sleep(100);
+        for (WebElement q : ql) {
+            List<WebElement> tdList = q.findElements(By.tagName("td"));
+            if (tdList.size() != 0) {
+                ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
+                qLinks.add(tds.get(3).findElement(By.tagName("a")).getAttribute("href"));
+            }
+        }
+        Thread.sleep(100);
+        for (String lnk : qLinks
+                ) {
+            driver.get(lnk);
+            Thread.sleep(300);
+            WebElement selectElem = driver.findElement(By.id("id_coderunnertype"));
+            Select select = new Select(selectElem);
+            select.selectByValue("java_program");
+
+            try {
+                driver.switchTo().alert().accept();
+
+            }catch (Exception e){
+               // System.out.println(e+"");
+            }
+            Thread.sleep(300);
+            driver.findElement(By.id("id_submitbutton")).click();
+            Thread.sleep(100);
+        }
+
+
+    }
+
     public void getAttempts(String attemptName) throws InterruptedException {
         driver.get("http://mdl.sch239.net/course/view.php?id=44");
         Thread.sleep(1000);
@@ -84,12 +179,12 @@ public class WebSelenium implements AutoCloseable {
 
         WebElement elem = driver.findElement(By.id("attempts"));
         List<WebElement> trs = elem.findElements(By.tagName("tr"));
-        trs = trs.subList(0,trs.size()-2);
+        trs = trs.subList(0, trs.size() - 2);
         for (WebElement tr : trs) {
-            List<WebElement> tdList =  tr.findElements(By.tagName("td"));
-            if (tdList.size()!=0) {
+            List<WebElement> tdList = tr.findElements(By.tagName("td"));
+            if (tdList.size() != 0) {
                 ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
-                if (tds.size()>1) {
+                if (tds.size() > 1) {
                     ArrayList<WebElement> hrLst = new ArrayList<WebElement>(tds.get(1).findElements(By.tagName("a")));
                     if (hrLst.size() == 2) {
                         String attemptHref = hrLst.get(1).getAttribute("href");
@@ -105,7 +200,7 @@ public class WebSelenium implements AutoCloseable {
 
                         ArrayList<WebElement> attemptList = getAList(tds.subList(8, tds.size()));
                         for (WebElement w : attemptList) {
-                            System.out.print(" "+w.getText());
+                            System.out.print(" " + w.getText());
                         }
                         System.out.println();
                     }

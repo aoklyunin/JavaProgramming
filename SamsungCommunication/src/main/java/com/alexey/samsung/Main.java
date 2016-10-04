@@ -30,7 +30,7 @@ public class Main extends Application {
 
         //dbHelper.parceMailList();
       //  dbHelper.parceCsv();
-        CustomOperations.getAttemps();
+        CustomOperations.copyQuestions();
         System.out.println("Complete");
        /* GMailSender sender = new GMailSender("aoklyunin@gmail.com", "aoklyunin1990");
         sender.sendMail("Тестовое письмо",
