@@ -1,6 +1,7 @@
 package com.alexey.samsung;
 
 
+import org.apache.logging.log4j.core.script.ScriptRef;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -11,6 +12,7 @@ import org.openqa.selenium.support.ui.Select;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.IntPredicate;
 
@@ -57,7 +59,11 @@ public class WebSelenium implements AutoCloseable {
     }
 
     WebSelenium() {
-        System.setProperty("webdriver.chrome.driver", "C://Program Files (x86)//chromedriver.exe");
+        if(System.getProperty("os.name").contains("inux")){
+            System.setProperty("webdriver.chrome.driver", "chromedriver");
+        }else {
+            System.setProperty("webdriver.chrome.driver", "C://Program Files (x86)//chromedriver.exe");
+        }
         driver = new ChromeDriver();
     }
 
@@ -121,6 +127,128 @@ public class WebSelenium implements AutoCloseable {
         Thread.sleep(100);
         driver.findElement(By.xpath("//input[@name=\"move\"]")).click();
         //Thread.sleep(60000);
+
+    }
+
+    public void loginToAnichkov() throws InterruptedException {
+        driver.get("https://dogovor.anichkov.ru/");
+        //Thread.sleep(1000);
+        driver.findElement(By.name("username")).sendKeys("nauka");
+        driver.findElement(By.name("password")).sendKeys("nauka*B61");
+        driver.findElement(By.xpath("//*[@id=\"contentC\"]/center/form/table/tbody/tr[3]/td[2]/input")).click();
+
+    }
+
+    public void goToSamsungPage(String group){
+        driver.findElement(By.xpath("//*[@id=\"contentL\"]/div/form/select")).click();
+        driver.findElement(By.xpath("//*[@id=\"contentL\"]/div/form/select/option[2]")).click();
+        driver.findElement(By.xpath("//*[@id=\"contentL\"]/div/form/select/option[39]")).click();
+        switch (Integer.parseInt(group)){
+            case 1:
+                driver.findElement(By.xpath("//*[@id=\"contentL\"]/div/form/select/option[40]")).click();
+
+                break;
+            case 2:
+                driver.findElement(By.xpath("//*[@id=\"contentL\"]/div/form/select/option[41]")).click();
+                break;
+            case 3:
+                driver.findElement(By.xpath("//*[@id=\"contentL\"]/div/form/select/option[42]")).click();
+                break;
+        }
+    }
+    public void fillAnichkov(ArrayList<String>lst )  throws InterruptedException{
+        fillAnichkov(lst.get(1),lst.get(2),
+                lst.get(3),lst.get(4),
+                lst.get(5),lst.get(6),
+                lst.get(7),lst.get(8),
+                lst.get(9),lst.get(10),
+                lst.get(11),lst.get(12),
+                lst.get(13),lst.get(14),
+                lst.get(15),lst.get(16));
+    }
+
+    public void fillAnichkov(String surname,String name, String secondmame,String sex,
+                             String old,String bDate,String klass,String school, String email, String phone, String district,
+                             String eName,String eSurname, String eSecondName, String adress, String ePhone
+                             )  throws InterruptedException {
+        //Thread.sleep(1000);
+        System.out.println(name+" "+surname);
+
+        HashMap<String , String> hm = new HashMap();
+        hm.put("Адмиралтейский","1");
+        hm.put("Василеостровский" ,"2");
+        hm.put("Выборгский","3");
+        hm.put("Калининский","4");
+        hm.put("Кировский" ,"5");
+        hm.put("Колпинский" ,"6");
+        hm.put("Красногвардейский" ,"7");
+        hm.put("Красносельский" ,"8");
+        hm.put("Кронштадтский" ,"9");
+        hm.put("Курортный" ,"10");
+        hm.put("Московский" ,"11");
+        hm.put("Невский" ,"12");
+        hm.put("Пушкинский" ,"13");
+        hm.put("Петроградский" ,"14");
+        hm.put("Петродворцовый" ,"15");
+        hm.put("Приморский" ,"16");
+        hm.put("Фрунзенский" ,"17");
+        hm.put("Центральный" ,"18");
+
+
+        driver.findElement(By.xpath("//*[@id=\"contractDate\"]")).sendKeys("01.10.2016");
+        driver.findElement(By.xpath("//*[@id=\"firstDate\"]")).sendKeys("01.10.2016");
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[2]/table/tbody/tr[3]/td[2]/input")).sendKeys(name);
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[2]/table/tbody/tr[4]/td[2]/input")).sendKeys(surname);
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[2]/table/tbody/tr[5]/td[2]/input")).sendKeys(secondmame);
+
+        // Выбираем пол
+        WebElement qselectElem = driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[2]/table/tbody/tr[6]/td[2]/select"));
+        Select qselect = new Select(qselectElem);
+        qselect.selectByValue(sex.equals("Мужской")?"1":"2");
+        // Выбираем возраст
+        qselectElem = driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[2]/table/tbody/tr[7]/td[2]/select"));
+        qselect = new Select(qselectElem);
+       // qselect.selectByVisibleText((Integer.parseInt(old)-2)+"");
+        qselect.selectByVisibleText((old));
+        // др
+        driver.findElement(By.xpath("//*[@id=\"birthday\"]")).sendKeys(bDate);
+        //класс
+        qselectElem = driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[2]/table/tbody/tr[9]/td[2]/select"));
+        qselect = new Select(qselectElem);
+        qselect.selectByVisibleText((Integer.parseInt(klass)-1)+"");
+        // школа
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[3]/table/tbody/tr[1]/td[2]/input")).sendKeys(school);
+        // email
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[3]/table/tbody/tr[2]/td[2]/input")).sendKeys(email);
+        // телефон
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[3]/table/tbody/tr[3]/td[2]/input")).sendKeys(phone);
+
+        qselectElem = driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[3]/table/tbody/tr[4]/td[2]/select"));
+        qselect = new Select(qselectElem);
+        //System.out.println(district);
+        if (hm.containsKey(district)) {
+            qselect.selectByValue(hm.get(district));
+        }else{
+            qselect.selectByValue("19");
+        }
+
+        //*[@id="formDogovor"]/div[3]/table/tbody/tr[4]/td[2]/select
+
+
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[3]/table/tbody/tr[5]/td[2]/input")).sendKeys("1");
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[3]/table/tbody/tr[6]/td[2]/input")).sendKeys(Keys.BACK_SPACE+"4");
+        // родители
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[7]/table/tbody/tr[1]/td[2]/input")).sendKeys(eName);
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[7]/table/tbody/tr[2]/td[2]/input")).sendKeys(eSurname);
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[7]/table/tbody/tr[3]/td[2]/input")).sendKeys(eSecondName);
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[8]/table/tbody/tr[1]/td[2]/input")).sendKeys(adress);
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[8]/table/tbody/tr[2]/td[2]/input")).sendKeys(ePhone);
+
+
+        //*[@id="formDogovor"]/div[3]/table/tbody/tr[2]/td[2]/input
+        Thread.sleep(1000);
+        driver.findElement(By.xpath("//*[@id=\"submitDogovor\"]")).click();
+
 
     }
 
