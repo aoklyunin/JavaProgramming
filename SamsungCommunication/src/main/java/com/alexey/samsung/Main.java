@@ -30,10 +30,22 @@ public class Main extends Application {
 
         //dbHelper.parceMailList();
       //  dbHelper.parceCsv();
-        CustomOperations customOperations = new CustomOperations();
+       // CustomOperations customOperations = new CustomOperations();
        // customOperations.fillAnichkov();
-
-        System.out.println("Complete");
+        try(WebSelenium webSelenium = new WebSelenium()) {
+            webSelenium.loadCurPage("https://2ip.ru/");
+            System.out.println("load1");
+            Thread.sleep(10000);
+            webSelenium.loadCurPage("https://google.com/");
+            webSelenium.setProxy("http://pr0xii.com/");
+            webSelenium.loadCurPage("https://2ip.ru/");
+            System.out.println("load2");
+            Thread.sleep(10000);
+            System.out.println("Complete");
+        }catch (Exception e){
+            System.out.println(e+"");
+        }
+        //System.out.println(WebSelenium.loadCurPageHTTP("http://google.com"));
        /* GMailSender sender = new GMailSender("aoklyunin@gmail.com", "aoklyunin1990");
         sender.sendMail("Тестовое письмо",
                 "Тестовое письмо\nВнезапно мдааааа",
@@ -42,7 +54,7 @@ public class Main extends Application {
 
         System.out.println("Completed");*/
         //vk = new VkApi();
-
+        primaryStage.close();
     }
 
 

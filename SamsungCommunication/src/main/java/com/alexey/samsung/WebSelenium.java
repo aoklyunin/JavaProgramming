@@ -2,16 +2,23 @@ package com.alexey.samsung;
 
 
 import org.apache.logging.log4j.core.script.ScriptRef;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.Select;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.IntPredicate;
@@ -23,6 +30,9 @@ import java.util.function.IntPredicate;
 public class WebSelenium implements AutoCloseable {
 
     static WebDriver driver;
+    ChromeOptions option;
+    static String proxy="";
+    DesiredCapabilities capabilities;
 
     public void fillAddUserPage(String login, String password, String name, String mail) throws InterruptedException {
         //Thread.sleep(1000);
@@ -58,18 +68,67 @@ public class WebSelenium implements AutoCloseable {
         btn.click();
     }
 
-    WebSelenium() {
+    WebSelenium(String proxyUrl) {
+        capabilities = DesiredCapabilities.chrome();
+        capabilities.setCapability("chrome.switches", Arrays.asList("--proxy-server="+proxyUrl+":8080"));
+
+        //option = new ChromeOptions();
+        //option.addArguments("--proxy-server=http://" + proxyUrl);
+
         if(System.getProperty("os.name").contains("inux")){
             System.setProperty("webdriver.chrome.driver", "chromedriver");
         }else {
             System.setProperty("webdriver.chrome.driver", "C://Program Files (x86)//chromedriver.exe");
         }
-        driver = new ChromeDriver();
+        driver = new ChromeDriver(capabilities);
+    }
+
+    WebSelenium() {
+        capabilities = DesiredCapabilities.chrome();
+        if(System.getProperty("os.name").contains("inux")){
+            System.setProperty("webdriver.chrome.driver", "chromedriver");
+        }else {
+            System.setProperty("webdriver.chrome.driver", "C://Program Files (x86)//chromedriver.exe");
+        }
+        driver = new ChromeDriver(capabilities);
+    }
+
+    static String loadCurPageHTTP(String urlS) throws IOException {
+        //driver.get(url);
+        System.setProperty("http.proxyHost", "http://pr0xii.com/");
+        System.setProperty("http.proxyPort", "8080");
+        URL url = new URL(urlS);
+        InputStream in = url.openStream();
+        String result = "";
+        try {
+            System.out.println("asd");
+            LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
+            String string = reader.readLine();
+            while (string != null) {
+                result += string+"\n";
+                string  = reader.readLine();
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+// Now, let's 'unset' the proxy.
+        System.setProperty("http.proxyHost", "");
+        return result;
+    }
+
+
+    public void loadCurPage(String urlS) throws IOException {
+        driver.get(urlS);
     }
 
     @Override
     public void close() throws Exception {
         driver.quit();
+    }
+
+    public void setProxy(String proxyUrl){
+        capabilities.setCapability("chrome.switches", Arrays.asList("--proxy-server="+proxyUrl+":8080"));
     }
 
     public ArrayList<WebElement> getAList(List<WebElement> l) {

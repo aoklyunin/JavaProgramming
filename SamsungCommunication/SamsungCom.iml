@@ -11,6 +11,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.seleniumhq.selenium:selenium-firefox-driver:3.0.0-beta4" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: com.oracle:javafx:2.2.3">
         <CLASSES>
