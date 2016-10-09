@@ -1,29 +1,28 @@
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
     public static void main(String[] args) {
-        Locale.setDefault(new Locale("en", "US"));
-       // System.err.println(Locale.getDefault());
-
+        //Locale.setDefault(new Locale("en", "US"));
+        // System.err.println(Locale.getDefault());
         Scanner sc = new Scanner(System.in);
-        for (int i = 0; i < 5; i++) {
-            double a = sc.nextDouble();
-            double b = sc.nextDouble();
-
-            //int b = sc.nextInt();
-            //double ln = Math.sqrt(a * a + b * b);
-            System.out.println(a+b);
-            System.out.println(a-b);
-            System.out.println(a*b);
-            System.out.println(a/b);
-            System.out.println(Math.pow(a,b));
+        String s = sc.nextLine();
+        String tmpS ="";
+        int sum = 0;
+        for(char c:s.toCharArray()){
+            if (c!='+'){
+                tmpS+=c;
+            }else{
+                sum += Integer.parseInt(tmpS);
+                tmpS = "";
+            }
         }
-
-
+        tmpS = tmpS.substring(0,tmpS.indexOf('.')-1);
+        sum += Integer.parseInt(tmpS);
+        System.out.println(sum);
     }
-
-
 }
 

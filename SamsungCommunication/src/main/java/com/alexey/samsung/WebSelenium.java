@@ -4,6 +4,7 @@ package com.alexey.samsung;
 import org.apache.logging.log4j.core.script.ScriptRef;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.CapabilityType;
@@ -17,11 +18,9 @@ import java.io.LineNumberReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.IntPredicate;
+import java.util.function.Predicate;
 
 
 /**
@@ -31,7 +30,7 @@ public class WebSelenium implements AutoCloseable {
 
     static WebDriver driver;
     ChromeOptions option;
-    static String proxy="";
+    static String proxy = "";
     DesiredCapabilities capabilities;
 
     public void fillAddUserPage(String login, String password, String name, String mail) throws InterruptedException {
@@ -68,29 +67,40 @@ public class WebSelenium implements AutoCloseable {
         btn.click();
     }
 
+
     WebSelenium(String proxyUrl) {
-        capabilities = DesiredCapabilities.chrome();
-        capabilities.setCapability("chrome.switches", Arrays.asList("--proxy-server="+proxyUrl+":8080"));
+        System.out.println("конструктор selenium");
+        org.openqa.selenium.Proxy proxy = new org.openqa.selenium.Proxy();
+        proxy.setHttpProxy(proxyUrl)
+                .setFtpProxy(proxyUrl)
+                .setSslProxy(proxyUrl);
+        DesiredCapabilities cap = new DesiredCapabilities();
+        cap.setCapability(CapabilityType.PROXY, proxy);
 
-        //option = new ChromeOptions();
-        //option.addArguments("--proxy-server=http://" + proxyUrl);
-
-        if(System.getProperty("os.name").contains("inux")){
+        if (System.getProperty("os.name").contains("inux")) {
             System.setProperty("webdriver.chrome.driver", "chromedriver");
-        }else {
+        } else {
+            System.setProperty("webdriver.chrome.driver", "C://Program Files (x86)//chromedriver.exe");
+        }
+        driver = new ChromeDriver();
+
+        //driver.manage().window().
+    }
+
+    WebSelenium() {
+        capabilities = DesiredCapabilities.chrome();
+        if (System.getProperty("os.name").contains("inux")) {
+            System.setProperty("webdriver.chrome.driver", "chromedriver");
+        } else {
             System.setProperty("webdriver.chrome.driver", "C://Program Files (x86)//chromedriver.exe");
         }
         driver = new ChromeDriver(capabilities);
     }
 
-    WebSelenium() {
-        capabilities = DesiredCapabilities.chrome();
-        if(System.getProperty("os.name").contains("inux")){
-            System.setProperty("webdriver.chrome.driver", "chromedriver");
-        }else {
-            System.setProperty("webdriver.chrome.driver", "C://Program Files (x86)//chromedriver.exe");
-        }
-        driver = new ChromeDriver(capabilities);
+    public String getIpFromPage() {
+        driver.get("https://2ip.ru/");
+        WebElement ipBlock = driver.findElement(By.xpath("//*[@id=\"content\"]/div[1]/div/div[3]"));
+        return ipBlock.getText().split("\n")[1];
     }
 
     static String loadCurPageHTTP(String urlS) throws IOException {
@@ -105,8 +115,8 @@ public class WebSelenium implements AutoCloseable {
             LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
             String string = reader.readLine();
             while (string != null) {
-                result += string+"\n";
-                string  = reader.readLine();
+                result += string + "\n";
+                string = reader.readLine();
             }
             reader.close();
         } catch (IOException e) {
@@ -117,6 +127,96 @@ public class WebSelenium implements AutoCloseable {
         return result;
     }
 
+    public void renameTests(String name, String value) throws InterruptedException {
+        driver.get("http://mdl.sch239.net/question/edit.php?courseid=44&cat=558%2C1&qpage=0&recurse=1&showhidden=1&qbshowtext=0");
+        WebElement qselectElem = driver.findElement(By.tagName("select"));
+        Select qselect = new Select(qselectElem);
+        qselect.selectByValue(value);
+        //*[@id="single_select57f3c955e54454"]
+
+        //driver.get(path);
+        WebElement table = driver.findElement(By.id("categoryquestions"));
+        List<WebElement> ql = table.findElements(By.tagName("tr"));
+        ArrayList<String> qLinks = new ArrayList<>();
+        Thread.sleep(100);
+        for (WebElement q : ql) {
+            List<WebElement> tdList = q.findElements(By.tagName("td"));
+            if (tdList.size() != 0) {
+                ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
+                qLinks.add(tds.get(2).findElement(By.tagName("a")).getAttribute("href"));
+            }
+        }
+        Thread.sleep(100);
+        int i = 0;
+        for (String lnk : qLinks
+                ) {
+            i++;
+            driver.get(lnk);
+            Thread.sleep(300);
+            WebElement edit = driver.findElement(By.xpath("//*[@id=\"id_name\"]"));
+            edit.sendKeys(Keys.chord(Keys.CONTROL, "a") + Keys.BACK_SPACE + name);
+            try {
+                WebElement selectElem = driver.findElement(By.id("id_coderunnertype"));
+                edit.sendKeys("_" + i);
+            } catch (Exception e) {
+
+            }
+            Thread.sleep(300);
+            driver.findElement(By.id("id_submitbutton")).click();
+            Thread.sleep(100);
+        }
+
+
+    }
+
+    // не получается нормально сделать, надо потом доделать
+    public void setTemplateToQuestions(String val, String template, Predicate<String> ps) throws InterruptedException {
+        driver.get("http://mdl.sch239.net/question/edit.php?courseid=44&cat=558%2C1&qpage=0&recurse=1&showhidden=1&qbshowtext=0");
+        WebElement qselectElem = driver.findElement(By.tagName("select"));
+        Select qselect = new Select(qselectElem);
+        qselect.selectByValue(val);
+
+        //*[@id="single_select57f3c955e54454"]
+
+        //driver.get(path);
+        WebElement table = driver.findElement(By.id("categoryquestions"));
+        List<WebElement> ql = table.findElements(By.tagName("tr"));
+        ArrayList<String> qLinks = new ArrayList<>();
+        Thread.sleep(100);
+        for (WebElement q : ql) {
+            if (ps.test(q.findElement(By.tagName("th")).getText())) {
+                List<WebElement> tdList = q.findElements(By.tagName("td"));
+                if (tdList.size() != 0) {
+                    ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
+                    qLinks.add(tds.get(2).findElement(By.tagName("a")).getAttribute("href"));
+                }
+            }
+        }
+
+        for (String lnk : qLinks
+                ) {
+            driver.get(lnk);
+            Thread.sleep(300);
+            WebElement chBx = driver.findElement(By.xpath("//*[@id=\"id_customise\"]"));
+            if (!chBx.isSelected()) {
+                chBx.click();
+            }
+            WebElement templateField =
+                    driver.findElement(By.xpath("//*[@class=\"felement ftextarea\"]" +
+                            "/div[1]/div[1]/div[2]/div[1]/div[3]"));
+            // /div[0]"));
+
+            System.out.println(templateField.getText());
+
+            templateField.click();
+            Thread.sleep(1000);
+            templateField.sendKeys(Keys.chord(Keys.CONTROL, "a") + Keys.BACK_SPACE + template);
+            Thread.sleep(300);
+            driver.findElement(By.id("id_submitbutton")).click();
+            Thread.sleep(100);
+        }
+
+    }
 
     public void loadCurPage(String urlS) throws IOException {
         driver.get(urlS);
@@ -127,8 +227,8 @@ public class WebSelenium implements AutoCloseable {
         driver.quit();
     }
 
-    public void setProxy(String proxyUrl){
-        capabilities.setCapability("chrome.switches", Arrays.asList("--proxy-server="+proxyUrl+":8080"));
+    public void setProxy(String proxyUrl) {
+        capabilities.setCapability("chrome.switches", Arrays.asList("--proxy-server=" + proxyUrl + ":8080"));
     }
 
     public ArrayList<WebElement> getAList(List<WebElement> l) {
@@ -140,9 +240,175 @@ public class WebSelenium implements AutoCloseable {
         }
         return al;
     }
+
+    public void fillRandom(String from, String to, int cnt) throws InterruptedException {
+        // выбираем, куда будем переносить
+        driver.get("http://mdl.sch239.net/question/edit.php?courseid=44&cat=558%2C1&qpage=0&recurse=1&showhidden=1&qbshowtext=0");
+        Thread.sleep(100);
+        // выбираем, откуда будем переносить
+        WebElement qselectElem = driver.findElement(By.tagName("select"));
+        Select qselect = new Select(qselectElem);
+        qselect.selectByValue(from);
+        Thread.sleep(100);
+        qselectElem = driver.findElement(By.id("menucategory"));
+        qselect = new Select(qselectElem);
+        qselect.selectByValue(to);
+
+        WebElement table = driver.findElement(By.id("categoryquestions"));
+        ArrayList<WebElement> ql = new ArrayList<>(table.findElements(By.tagName("tr")));
+
+        Random random = new Random();
+        HashSet<String> hs = new HashSet<>();
+
+        for (int i = 0; i < cnt; i++) {
+            WebElement w = ql.get(random.nextInt(ql.size()));
+            String s = w.findElement(By.tagName("th")).getText();
+            while (hs.contains(s)) {
+                w = ql.get(random.nextInt(ql.size()));
+                s = w.findElement(By.tagName("th")).getText();
+            }
+            hs.add(s);
+        }
+        //for (String s : hs) {
+        //copyQuestion(from, as -> as.equals(s));
+
+        moveCopiedQuestionsS(from, to, as -> hs.contains(as));
+        // }
+        System.out.println("Checked");
+        Thread.sleep(100);
+        driver.findElement(By.xpath("//input[@name=\"move\"]")).click();
+        //Thread.sleep(60000);
+
+    }
+
     // from - value соответствуещего пункта select'a для выбора "откуда"
     // to - value соответствуещего пункта select'a для выбора "куда"
     // ip  - лямбда выражение для выбора, какие пункты надо копировать
+    public void moveCopiedQuestionsS(String from, String to, Predicate<String> sp) throws InterruptedException {
+        // выбираем, куда будем переносить
+        driver.get("http://mdl.sch239.net/question/edit.php?courseid=44&cat=558%2C1&qpage=0&recurse=1&showhidden=1&qbshowtext=0");
+
+        Thread.sleep(100);
+        // выбираем, откуда будем переносить
+        WebElement qselectElem = driver.findElement(By.tagName("select"));
+        Select qselect = new Select(qselectElem);
+        qselect.selectByValue(from);
+        Thread.sleep(100);
+        qselectElem = driver.findElement(By.id("menucategory"));
+        qselect = new Select(qselectElem);
+        qselect.selectByValue(to);
+
+
+        //*[@id="single_select57f3c955e54454"]
+        // Thread.sleep(1000);
+        //driver.get(path);
+        // Thread.sleep(1500);
+
+        WebElement table = driver.findElement(By.id("categoryquestions"));
+        List<WebElement> ql = table.findElements(By.tagName("tr"));
+
+        int i = 0;
+        for (WebElement q : ql) {
+            if (sp.test(q.findElement(By.tagName("th")).getText())) {
+                List<WebElement> tdList = q.findElements(By.tagName("td"));
+                if (tdList.size() != 0) {
+                    ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
+                    try {
+                        tds.get(0).findElement(By.tagName("input")).click();
+                        //System.out.println(tds.get(0));
+                    } catch (Exception e) {
+                        System.out.println("error:" + e);
+                    }
+
+                }
+            }
+            i++;
+        }
+        System.out.println("Checked");
+        Thread.sleep(100);
+        try {
+            driver.findElement(By.xpath("//input[@name=\"move\"]")).click();
+        } catch (Exception e) {
+            System.out.println(e + "");
+        }
+        //Thread.sleep(60000);
+
+    }
+
+    public void addQuestionsToTest(String path, String from) throws InterruptedException {
+        // выбираем, куда будем переносить
+        driver.get(path);
+        Thread.sleep(100);
+        // выбираем, откуда будем переносить
+        driver.findElement(By.xpath("//*[@id=\"settingsnav\"]/ul/li[1]/ul/li[4]/p/a")).click();
+        Thread.sleep(4000);
+        WebElement qselectElem = driver.findElement(By.tagName("select"));
+        Select qselect = new Select(qselectElem);
+        qselect.selectByValue(from);
+
+        ArrayList<WebElement> aw = new ArrayList<>(driver.findElements(By.xpath("//*[@id=\"categoryquestions\"]/tbody/tr")));
+        aw.get(aw.size() - 1).findElement(By.xpath("td[1]/a")).click();
+        Thread.sleep(2000);
+        aw = new ArrayList<>(driver.findElements(By.xpath("//*[@id=\"categoryquestions\"]/tbody/tr")));
+
+        //System.out.println(aw);
+        for (WebElement a : aw.subList(0, aw.size() - 1)) {
+            List<WebElement> tdList = a.findElements(By.tagName("td"));
+            //for(WebElement w:tdList){
+              //  System.out.println(w.getText());
+            //}
+
+            ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
+            try {
+                tds.get(1).findElement(By.tagName("input")).click();
+                //System.out.println(tds.get(0));
+            } catch (Exception e) {
+                System.out.println("error" + from);
+            }
+
+        }
+        driver.findElement(By.xpath("//*[@id=\"module\"]/div/div/form[2]/fieldset/div[3]/input[1]")).click();
+
+        Thread.sleep(1000);
+    }
+
+
+    public void addRef(String from, String name) throws InterruptedException {
+        // выбираем, куда будем переносить
+        driver.get("http://mdl.sch239.net/question/edit.php?courseid=44&cat=558%2C1&qpage=0&recurse=1&showhidden=1&qbshowtext=0");
+
+        Thread.sleep(100);
+        // выбираем, откуда будем переносить
+        WebElement qselectElem = driver.findElement(By.tagName("select"));
+        Select qselect = new Select(qselectElem);
+        qselect.selectByValue(from);
+        Thread.sleep(100);
+        driver.findElement(By.xpath("//*[@id=\"region-main\"]/div/div/div[1]/div[1]/form/div/input[1]")).click();
+        Thread.sleep(100);
+        driver.findElement(By.xpath("//*[@id=\"qtype_qtype_description\"]")).click();
+        driver.findElement(By.name("submitbutton")).click();
+        Thread.sleep(100);
+        driver.findElement(By.xpath("//*[@id=\"id_name\"]")).sendKeys(name);
+        Thread.sleep(5000);
+        driver.findElement(By.xpath("//*[@id=\"id_questiontexteditable\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"id_questiontexteditable\"]")).sendKeys(
+                "Порядок выставления оценок:\n" +
+                        "1 задач - 1\n" +
+                        "2 задач - 2\n" +
+                        "3 задач - 3\n" +
+                        "4 задач - 4\n" +
+                        "5 задач - 5"
+        );
+        Thread.sleep(5000);
+        try {
+            driver.findElement(By.name("submitbutton")).click();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        //  System.out.println("sdf");
+        // Thread.sleep(20000);
+    }
+
     public void moveCopiedQuestions(String from, String to, IntPredicate ip) throws InterruptedException {
         // выбираем, куда будем переносить
         driver.get("http://mdl.sch239.net/question/edit.php?courseid=44&cat=558%2C1&qpage=0&recurse=1&showhidden=1&qbshowtext=0");
@@ -159,24 +425,24 @@ public class WebSelenium implements AutoCloseable {
 
 
         //*[@id="single_select57f3c955e54454"]
-       // Thread.sleep(1000);
+        // Thread.sleep(1000);
         //driver.get(path);
-       // Thread.sleep(1500);
+        // Thread.sleep(1500);
 
         WebElement table = driver.findElement(By.id("categoryquestions"));
         List<WebElement> ql = table.findElements(By.tagName("tr"));
 
-        int i=0;
+        int i = 0;
         for (WebElement q : ql) {
             List<WebElement> tdList = q.findElements(By.tagName("td"));
             if (tdList.size() != 0) {
                 ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
-                if(ip.test(i)){
+                if (ip.test(i)) {
                     try {
                         tds.get(0).findElement(By.tagName("input")).click();
                         //System.out.println(tds.get(0));
-                    }catch (Exception e){
-                        System.out.println("error"+from);
+                    } catch (Exception e) {
+                        System.out.println("error" + from);
                     }
                 }
             }
@@ -189,6 +455,7 @@ public class WebSelenium implements AutoCloseable {
 
     }
 
+
     public void loginToAnichkov() throws InterruptedException {
         driver.get("https://dogovor.anichkov.ru/");
         //Thread.sleep(1000);
@@ -198,11 +465,11 @@ public class WebSelenium implements AutoCloseable {
 
     }
 
-    public void goToSamsungPage(String group){
+    public void goToSamsungPage(String group) {
         driver.findElement(By.xpath("//*[@id=\"contentL\"]/div/form/select")).click();
         driver.findElement(By.xpath("//*[@id=\"contentL\"]/div/form/select/option[2]")).click();
         driver.findElement(By.xpath("//*[@id=\"contentL\"]/div/form/select/option[39]")).click();
-        switch (Integer.parseInt(group)){
+        switch (Integer.parseInt(group)) {
             case 1:
                 driver.findElement(By.xpath("//*[@id=\"contentL\"]/div/form/select/option[40]")).click();
 
@@ -215,43 +482,44 @@ public class WebSelenium implements AutoCloseable {
                 break;
         }
     }
-    public void fillAnichkov(ArrayList<String>lst )  throws InterruptedException{
-        fillAnichkov(lst.get(1),lst.get(2),
-                lst.get(3),lst.get(4),
-                lst.get(5),lst.get(6),
-                lst.get(7),lst.get(8),
-                lst.get(9),lst.get(10),
-                lst.get(11),lst.get(12),
-                lst.get(13),lst.get(14),
-                lst.get(15),lst.get(16));
+
+    public void fillAnichkov(ArrayList<String> lst) throws InterruptedException {
+        fillAnichkov(lst.get(1), lst.get(2),
+                lst.get(3), lst.get(4),
+                lst.get(5), lst.get(6),
+                lst.get(7), lst.get(8),
+                lst.get(9), lst.get(10),
+                lst.get(11), lst.get(12),
+                lst.get(13), lst.get(14),
+                lst.get(15), lst.get(16));
     }
 
-    public void fillAnichkov(String surname,String name, String secondmame,String sex,
-                             String old,String bDate,String klass,String school, String email, String phone, String district,
-                             String eName,String eSurname, String eSecondName, String adress, String ePhone
-                             )  throws InterruptedException {
+    public void fillAnichkov(String surname, String name, String secondmame, String sex,
+                             String old, String bDate, String klass, String school, String email, String phone, String district,
+                             String eName, String eSurname, String eSecondName, String adress, String ePhone
+    ) throws InterruptedException {
         //Thread.sleep(1000);
-        System.out.println(name+" "+surname);
+        System.out.println(name + " " + surname);
 
-        HashMap<String , String> hm = new HashMap();
-        hm.put("Адмиралтейский","1");
-        hm.put("Василеостровский" ,"2");
-        hm.put("Выборгский","3");
-        hm.put("Калининский","4");
-        hm.put("Кировский" ,"5");
-        hm.put("Колпинский" ,"6");
-        hm.put("Красногвардейский" ,"7");
-        hm.put("Красносельский" ,"8");
-        hm.put("Кронштадтский" ,"9");
-        hm.put("Курортный" ,"10");
-        hm.put("Московский" ,"11");
-        hm.put("Невский" ,"12");
-        hm.put("Пушкинский" ,"13");
-        hm.put("Петроградский" ,"14");
-        hm.put("Петродворцовый" ,"15");
-        hm.put("Приморский" ,"16");
-        hm.put("Фрунзенский" ,"17");
-        hm.put("Центральный" ,"18");
+        HashMap<String, String> hm = new HashMap();
+        hm.put("Адмиралтейский", "1");
+        hm.put("Василеостровский", "2");
+        hm.put("Выборгский", "3");
+        hm.put("Калининский", "4");
+        hm.put("Кировский", "5");
+        hm.put("Колпинский", "6");
+        hm.put("Красногвардейский", "7");
+        hm.put("Красносельский", "8");
+        hm.put("Кронштадтский", "9");
+        hm.put("Курортный", "10");
+        hm.put("Московский", "11");
+        hm.put("Невский", "12");
+        hm.put("Пушкинский", "13");
+        hm.put("Петроградский", "14");
+        hm.put("Петродворцовый", "15");
+        hm.put("Приморский", "16");
+        hm.put("Фрунзенский", "17");
+        hm.put("Центральный", "18");
 
 
         driver.findElement(By.xpath("//*[@id=\"contractDate\"]")).sendKeys("01.10.2016");
@@ -263,18 +531,18 @@ public class WebSelenium implements AutoCloseable {
         // Выбираем пол
         WebElement qselectElem = driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[2]/table/tbody/tr[6]/td[2]/select"));
         Select qselect = new Select(qselectElem);
-        qselect.selectByValue(sex.equals("Мужской")?"1":"2");
+        qselect.selectByValue(sex.equals("Мужской") ? "1" : "2");
         // Выбираем возраст
         qselectElem = driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[2]/table/tbody/tr[7]/td[2]/select"));
         qselect = new Select(qselectElem);
-       // qselect.selectByVisibleText((Integer.parseInt(old)-2)+"");
+        // qselect.selectByVisibleText((Integer.parseInt(old)-2)+"");
         qselect.selectByVisibleText((old));
         // др
         driver.findElement(By.xpath("//*[@id=\"birthday\"]")).sendKeys(bDate);
         //класс
         qselectElem = driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[2]/table/tbody/tr[9]/td[2]/select"));
         qselect = new Select(qselectElem);
-        qselect.selectByVisibleText((Integer.parseInt(klass)-1)+"");
+        qselect.selectByVisibleText((Integer.parseInt(klass) - 1) + "");
         // школа
         driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[3]/table/tbody/tr[1]/td[2]/input")).sendKeys(school);
         // email
@@ -287,7 +555,7 @@ public class WebSelenium implements AutoCloseable {
         //System.out.println(district);
         if (hm.containsKey(district)) {
             qselect.selectByValue(hm.get(district));
-        }else{
+        } else {
             qselect.selectByValue("19");
         }
 
@@ -295,7 +563,7 @@ public class WebSelenium implements AutoCloseable {
 
 
         driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[3]/table/tbody/tr[5]/td[2]/input")).sendKeys("1");
-        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[3]/table/tbody/tr[6]/td[2]/input")).sendKeys(Keys.BACK_SPACE+"4");
+        driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[3]/table/tbody/tr[6]/td[2]/input")).sendKeys(Keys.BACK_SPACE + "4");
         // родители
         driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[7]/table/tbody/tr[1]/td[2]/input")).sendKeys(eName);
         driver.findElement(By.xpath("//*[@id=\"formDogovor\"]/div[7]/table/tbody/tr[2]/td[2]/input")).sendKeys(eSurname);
@@ -307,12 +575,10 @@ public class WebSelenium implements AutoCloseable {
         //*[@id="formDogovor"]/div[3]/table/tbody/tr[2]/td[2]/input
         Thread.sleep(1000);
         driver.findElement(By.xpath("//*[@id=\"submitDogovor\"]")).click();
-
-
     }
 
     // qName - value соответствуещего пункта select'a
-    public void copyQuestion(String qName) throws InterruptedException {
+    public void copyQuestion(String qName, Predicate<String> ps) throws InterruptedException {
         driver.get("http://mdl.sch239.net/question/edit.php?courseid=44&cat=558%2C1&qpage=0&recurse=1&showhidden=1&qbshowtext=0");
         WebElement qselectElem = driver.findElement(By.tagName("select"));
         Select qselect = new Select(qselectElem);
@@ -325,10 +591,12 @@ public class WebSelenium implements AutoCloseable {
         ArrayList<String> qLinks = new ArrayList<>();
         Thread.sleep(100);
         for (WebElement q : ql) {
-            List<WebElement> tdList = q.findElements(By.tagName("td"));
-            if (tdList.size() != 0) {
-                ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
-                qLinks.add(tds.get(3).findElement(By.tagName("a")).getAttribute("href"));
+            if (ps.test(q.findElement(By.tagName("th")).getText())) {
+                List<WebElement> tdList = q.findElements(By.tagName("td"));
+                if (tdList.size() != 0) {
+                    ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
+                    qLinks.add(tds.get(3).findElement(By.tagName("a")).getAttribute("href"));
+                }
             }
         }
         Thread.sleep(100);
@@ -343,8 +611,8 @@ public class WebSelenium implements AutoCloseable {
             try {
                 driver.switchTo().alert().accept();
 
-            }catch (Exception e){
-               // System.out.println(e+"");
+            } catch (Exception e) {
+                // System.out.println(e+"");
             }
             Thread.sleep(300);
             driver.findElement(By.id("id_submitbutton")).click();

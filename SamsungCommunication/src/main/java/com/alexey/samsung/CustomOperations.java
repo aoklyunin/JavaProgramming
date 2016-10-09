@@ -120,33 +120,53 @@ public class CustomOperations {
             Thread.sleep(1000);
             //webSelenium.copyQuestion("558,1");
             String arr[] = {
-                    "564,1",
-                    "565,1",
-                    "566,1",
-                    "116,1",
-                    "117,1",
-                    "118,1",
-                    "119,1",
-                    "120,1",
-                    "28,1",
-                    "29,1",
-                    "144,1",
-                    "20,1",
-                    "21,1"
+                    "122,1"
             };
+            String arr2[] = {
+                    "111,1",
+                    "22,1"};
+
             System.out.println("yyeee");
             for (String a : arr) {
-                //webSelenium.copyQuestion(a);
-                //Thread.sleep(500);
-                //webSelenium.moveCopiedQuestions(a, "1129,33", (n) -> n % 2 == 0);
-                Thread.sleep(500);
+                webSelenium.copyQuestion(a, s -> true);
+                Thread.sleep(100);
+                webSelenium.moveCopiedQuestions(a, "1120,33", (n) -> n % 2 == 0);
+                Thread.sleep(100);
             }
+            for (String a : arr2) {
+                webSelenium.copyQuestion(a, s -> true);
+                Thread.sleep(100);
+                webSelenium.moveCopiedQuestions(a, "1498,33", (n) -> n % 2 == 0);
+                Thread.sleep(100);
+            }
+
+        }
+    }
+
+    public static void renameTests() throws Exception {
+        try (WebSelenium webSelenium = new WebSelenium()) {
+            webSelenium.loginToMdl();
+            Thread.sleep(2000);
+            String arr[][] = {
+                    {"1510,33", "09_Практика_1"},
+                    {"1521,33", "09_Практика_1_ДЗ"},
+                    {"1511,33", "10_Практика_2"},
+                    {"1522,33", "11_Практика_2_ДЗ"},
+                    {"1512,33", "12_Практика_3"},
+                    {"1523,33", "12_Практика_3_ДЗ"},
+                    {"1513,33", "13_Практика_4"},
+                    {"1524,33", "13_Практика_4_ДЗ"}
+            };
+            for (String[] a : arr) {
+                webSelenium.renameTests(a[1], a[0]);
+            }
+
         }
     }
 
     public ArrayList<ArrayList<String>> readAnichkovCSV() {
         try (BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(getClass().getResourceAsStream("/source/AnichkovForm.csv")))){
+                new InputStreamReader(getClass().getResourceAsStream("/source/AnichkovForm.csv")))) {
             String commandstring;
             ArrayList<ArrayList<String>> sList = new ArrayList<>();
             int cnt = 0;
@@ -162,7 +182,7 @@ public class CustomOperations {
                 while (matcher.find()) {
                     String tmp = matcher.group();
                     //System.out.println(tmp);
-                    sl.add(tmp.replace("\"",""));
+                    sl.add(tmp.replace("\"", ""));
                     i++;
                 }
                 cnt++;
@@ -170,12 +190,83 @@ public class CustomOperations {
                 sList.add(sl);
             }
             return sList;
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Fuck");
         }
         System.out.println("eagasg");
         return null;
+    }
+
+    public static void addQuestionsToTest(){
+        try (WebSelenium webSelenium = new WebSelenium()) {
+            webSelenium.loginToMdl();
+            Thread.sleep(1000);
+            String sArr[][] = {
+                    {"1522,33", "http://mdl.sch239.net/mod/quiz/view.php?id=1484"}
+            };
+
+            for (String [] sA:sArr) {
+                webSelenium.addQuestionsToTest(sA[1], sA[0]);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void addRefs() {
+        try (WebSelenium webSelenium = new WebSelenium()) {
+            webSelenium.loginToMdl();
+            Thread.sleep(1000);
+            String sArr[][] = {
+                    {"1512,33", "11_Практика_3"},
+                    {"1523,33", "11_Практика_3_ДЗ"},
+                    {"1513,33", "12_Практика_4"},
+                    {"1524,33", "12_Практика_4_ДЗ"}
+            };
+
+            for (String sa[] : sArr) {
+                webSelenium.addRef(sa[0],sa[1]);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void fillRandom() {
+        try (WebSelenium webSelenium = new WebSelenium()) {
+            webSelenium.loginToMdl();
+            Thread.sleep(1000);
+            String sArr[] = {
+                    "1510,33",
+                    "1521,33",
+                    "1511,33",
+                    "1522,33",
+                    "1512,33",
+                    "1523,33",
+                    "1513,33",
+                    "1524,33"
+            };
+
+            for (String s : sArr) {
+                webSelenium.fillRandom("1129,33", s, 13);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setTemplateToQuestions() throws Exception {
+        try (WebSelenium webSelenium = new WebSelenium()) {
+            webSelenium.loginToMdl();
+            Thread.sleep(1000);
+            String template = "{{ STUDENT_ANSWER | replace({'charAt':' WRONG_cahrat '}) }}";
+            webSelenium.setTemplateToQuestions("1508,33", template, (s) -> !s.equals("07_Строки_"));
+
+        }
     }
 
     public void fillAnichkov() {
@@ -186,30 +277,29 @@ public class CustomOperations {
             lst.sort((o1, o2) -> o1.get(1).compareTo(o2.get(1)));
             //System.out.println( lst);
             String prevGroup = "0";
-            if (lst!=null){
+            if (lst != null) {
                 //System.out.println(cnt);
                 if (lst.size() > 0) {
                     int size1 = lst.size();
                     //String sArr[][] = new String[size1][size2];
-                    for ( ArrayList<String> l :lst) {
+                    for (ArrayList<String> l : lst) {
                         //sArr[i] = new String[size2];
-                        if(!l.get(1).equals(prevGroup)){
+                        if (!l.get(1).equals(prevGroup)) {
                             prevGroup = l.get(1);
                             webSelenium.goToSamsungPage(prevGroup);
                         }
                         l.remove(1);
 
-                        String sArr [] = l.get(6).split("-");
-                        l.set(6,sArr[2]+"."+sArr[1]+"."+sArr[0]);
-                        for (int i = 0; i <l.size() ; i++) {
-                            if (l.get(i).replace(" ","").equals("")){
-                                l.set(i,"-");
+                        String sArr[] = l.get(6).split("-");
+                        l.set(6, sArr[2] + "." + sArr[1] + "." + sArr[0]);
+                        for (int i = 0; i < l.size(); i++) {
+                            if (l.get(i).replace(" ", "").equals("")) {
+                                l.set(i, "-");
                             }
                         }
-
                         webSelenium.fillAnichkov(l);
                     }
-                }else {
+                } else {
                     System.out.println("Пустой лист");
                 }
             }

@@ -6,18 +6,35 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 // TODO: 25.09.2016  Нужно кнопку VK скрыть и открывать только когда подключение сделано
 // http://stackoverflow.com/questions/30308065/changing-the-text-of-a-label-from-a-different-class-in-javafx
+// подключить прокси к selenium
 
 public class Main extends Application {
-
+    Logger logger;
+    PrintStream console = System.err;
+    private void initErrLog() throws FileNotFoundException {
+        File file = new File("err.log");
+        FileOutputStream fos = new FileOutputStream(file);
+        PrintStream ps = new PrintStream(fos);
+        System.setErr(ps);
+    }
     private Stage primaryStage;
     private AnchorPane rootLayout;
     public VkApi vk;
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage){
+       /* try {
+            initErrLog();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }*/
+
         //vkHelper.save("303154598",0,1);
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("SamsungCommunication");
@@ -32,19 +49,35 @@ public class Main extends Application {
       //  dbHelper.parceCsv();
        // CustomOperations customOperations = new CustomOperations();
        // customOperations.fillAnichkov();
-        try(WebSelenium webSelenium = new WebSelenium()) {
-            webSelenium.loadCurPage("https://2ip.ru/");
-            System.out.println("load1");
-            Thread.sleep(10000);
-            webSelenium.loadCurPage("https://google.com/");
-            webSelenium.setProxy("http://pr0xii.com/");
-            webSelenium.loadCurPage("https://2ip.ru/");
-            System.out.println("load2");
-            Thread.sleep(10000);
-            System.out.println("Complete");
-        }catch (Exception e){
-            System.out.println(e+"");
+        try {
+            CustomOperations.renameTests();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+/*
+        try(WebSelenium webSelenium = new WebSelenium("203.223.143.51:8080")) {
+            System.out.println("load2");
+            System.out.println(webSelenium.getIpFromPage());
+            Thread.sleep(1000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try(WebSelenium webSelenium = new WebSelenium()) {
+            System.out.println("load1");
+            System.out.println(webSelenium.getIpFromPage());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try(WebSelenium webSelenium = new WebSelenium("77.123.18.56:81")) {
+            System.out.println("load3");
+            System.out.println(webSelenium.getIpFromPage());
+            Thread.sleep(1000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
+
         //System.out.println(WebSelenium.loadCurPageHTTP("http://google.com"));
        /* GMailSender sender = new GMailSender("aoklyunin@gmail.com", "aoklyunin1990");
         sender.sendMail("Тестовое письмо",
