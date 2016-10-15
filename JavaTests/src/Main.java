@@ -8,21 +8,12 @@ public class Main {
     public static void main(String[] args) {
         //Locale.setDefault(new Locale("en", "US"));
         // System.err.println(Locale.getDefault());
-        Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine();
-        String tmpS ="";
-        int sum = 0;
-        for(char c:s.toCharArray()){
-            if (c!='+'){
-                tmpS+=c;
-            }else{
-                sum += Integer.parseInt(tmpS);
-                tmpS = "";
-            }
+        String regStr = "[0-9]";
+        String inS="aasd dfnsjfsd   asndj    asdasdas  ";
+        String [] sArr = inS.split(" ");
+        for(String s:sArr){
+            System.out.println(s);
         }
-        tmpS = tmpS.substring(0,tmpS.indexOf('.')-1);
-        sum += Integer.parseInt(tmpS);
-        System.out.println(sum);
     }
 }
 
