@@ -1,5 +1,6 @@
 package com.alexey.samsung;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -106,11 +107,60 @@ public class CustomOperations {
 
     }
 
+    public static void dispAttempt(String testName) {
+        try (DBHelper dbHelper = new DBHelper()) {
+            dbHelper.connect();
+            ArrayList<String [] > isLst = dbHelper.getInformaticSchooler();
+            for (String [] sArr : isLst ){
+                System.out.println(sArr[0]);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void getAttemps() throws Exception {
-        try (WebSelenium webSelenium = new WebSelenium()) {
+        try (WebSelenium webSelenium = new WebSelenium();DBHelper dbHelper = new DBHelper()) {
             webSelenium.loginToMdl();
             Thread.sleep(1000);
-            webSelenium.getAttempts("02_Ведение в Java");
+            String tests[][] = {
+                    {"01_Модель вход-выход_тест ДЗ","0"},
+                    {"02_Модель вход-выход 2_тест(в классе)","0"},
+                    {"03_Комплексные числа(в классе)","0"},
+                    {"03_Комплексные числа ДЗ_тест","0"},
+                    {"04_Свободная составляющая","0"},
+                    {"05_Матрицы","0"},
+            };
+
+            for (String [] test:tests) {
+                ArrayList<WebSelenium.Attempt> lst =
+                        webSelenium.getAttempts(test[0], test[1].equals("1"));
+                dbHelper.connect();
+
+                for (int i = 0; i < lst.size(); i++) {
+                    WebSelenium.Attempt a = lst.get(i);
+                    String sArr[] = new String[13];
+                    //System.out.println(+"");
+                    sArr[0] = "NULL";
+                    sArr[1] = DBHelper.toSQLString(a.name);
+                    sArr[2] = DBHelper.toSQLString(a.mail);
+                    sArr[3] = test[1];
+                    sArr[4] = DBHelper.toSQLString(a.state);
+                    sArr[5] = DBHelper.toSQLDTString(WebSelenium.getDateTimeFromMdl(a.starts));
+                    sArr[6] = DBHelper.toSQLDTString(a.ends.equals("-")?new DateTime(0):WebSelenium.getDateTimeFromMdl(a.ends));
+                    sArr[7] = DBHelper.toSQLString(a.tm);
+                    sArr[8] = a.evaluation+"";
+                    sArr[9] = DBHelper.toSQLString(a.href);
+                    sArr[10] = a.sum+"";
+                    sArr[11] = DBHelper.toSQLString(test[0]);
+                    sArr[12] = DBHelper.toSQLDTString(DateTime.now());
+                    //  System.out.println(a);
+                    String condition = DBHelper.KEY_MAIL+" = "+ sArr[2]+" AND "+DBHelper.KEY_SUM+"="+sArr[10];
+                    dbHelper.addAttemptRecord(DBHelper.attemptTable,sArr,condition);
+                }
+            }
         }
     }
 
@@ -148,12 +198,8 @@ public class CustomOperations {
             webSelenium.loginToMdl();
             Thread.sleep(2000);
             String arr[][] = {
-                    {"1121,33", "02_Введение в java"},
-                    {"1122,33", "02_Введение в java_ДЗ"},
-                    {"1123,33", "03_Условные операторы"},
-                    {"1124,33", "03_Условные операторы_ДЗ"},
-                    {"1125,33", "04_Циклы while"},
-                    {"1126,33", "04_Циклы while_ДЗ"},
+                    {"1515,33", "10_Рекурсия"},
+                    {"1526,33", "10_Рекурсия_ДЗ"}
             };
             for (String[] a : arr) {
                 webSelenium.renameTests(a[1], a[0]);
@@ -201,9 +247,9 @@ public class CustomOperations {
             webSelenium.loginToMdl();
             Thread.sleep(1000);
             String sArr[][] = {
-                    {"1522,33", "http://mdl.sch239.net/mod/quiz/view.php?id=1484"}
+                   // {"1515,33", "http://mdl.sch239.net/mod/quiz/view.php?id=1548"},
+                    {"1526,33", "http://mdl.sch239.net/mod/quiz/view.php?id=1550"},
             };
-
             for (String [] sA:sArr) {
                 webSelenium.addQuestionsToTest(sA[1], sA[0]);
             }
@@ -219,7 +265,12 @@ public class CustomOperations {
             webSelenium.loginToMdl();
             Thread.sleep(1000);
             String sArr[][] = {
-                    {"1125,33", "04_Циклы while"}
+                    {"1515,33", "10_Рекурсия"},
+                    {"1526,33", "10_Рекурсия_ДЗ"},
+                    {"1604,33", "11_Рекурсия_2"},
+                    {"1605,33", "11_Рекурсия_2_ДЗ"},
+                    {"1596,33", "12_Двумерные массивы"},
+                    {"1597,33", "12_Двумерные массивы_ДЗ"},
             };
 
             for (String sa[] : sArr) {
@@ -258,8 +309,26 @@ public class CustomOperations {
         try (WebSelenium webSelenium = new WebSelenium()) {
             webSelenium.loginToMdl();
             Thread.sleep(1000);
-            String template = "{{ STUDENT_ANSWER | replace({'charAt':' WRONG_cahrat '}) }}";
-            webSelenium.setTemplateToQuestions("1508,33", template, (s) -> !s.equals("07_Строки_"));
+            String template = "import java.util.*;\n" +
+                    "\n" +
+                    "public class A{\n" +
+                    "\n" +
+                    " public static void main(String [] args){\n" +
+                    " {{ TEST.testcode }}\n" +
+                    " {{ STUDENT_ANSWER }}\n" +
+                    " for (int i=0;i<arr.length;i++){\n" +
+                    "  for (int j = 0; j < arr[i].length; j++) {\n" +
+                    "    System.out.print(arr[i][j]+\" \");\n" +
+                    "  \n" +
+                    "  System.out.println();\n" +
+                    " " +
+                    " \n";
+            String [] arr = {
+                   // "1596,33",
+                    "1597,33"
+            };
+            for (String sa:arr)
+                webSelenium.setTemplateToQuestions(sa, template, (s) -> true);
 
         }
     }

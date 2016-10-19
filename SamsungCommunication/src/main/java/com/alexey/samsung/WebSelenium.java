@@ -2,6 +2,9 @@ package com.alexey.samsung;
 
 
 import org.apache.logging.log4j.core.script.ScriptRef;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -18,6 +21,8 @@ import java.io.LineNumberReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
@@ -195,28 +200,38 @@ public class WebSelenium implements AutoCloseable {
 
         for (String lnk : qLinks
                 ) {
-            driver.get(lnk);
-            Thread.sleep(300);
-            WebElement chBx = driver.findElement(By.xpath("//*[@id=\"id_customise\"]"));
-            if (!chBx.isSelected()) {
-                chBx.click();
+            try {
+                driver.get(lnk);
+                Thread.sleep(300);
+
+                WebElement chBx = driver.findElement(By.xpath("//*[@id=\"id_customise\"]"));
+                if (!chBx.isSelected()) {
+                    chBx.click();
+                }
+
+                Thread.sleep(300);
+                WebElement templateField =
+                        driver.findElement(By.xpath("//*[@class=\"felement ftextarea\"]" +
+                                "/div[1]/div[1]/div[2]"));
+
+                //System.out.println(templateField.getText());
+                templateField.click();
+
+                Thread.sleep(1000);
+                driver.switchTo().activeElement().sendKeys(Keys.chord(Keys.CONTROL, "a") + Keys.BACK_SPACE + template);
+
+                Thread.sleep(1000);
+                driver.findElement(By.id("id_submitbutton")).click();
+                Thread.sleep(100);
+            } catch (Exception e) {
+                System.out.println(e);
             }
-            WebElement templateField =
-                    driver.findElement(By.xpath("//*[@class=\"felement ftextarea\"]" +
-                            "/div[1]/div[1]/div[2]/div[1]/div[3]"));
-            // /div[0]"));
 
-            System.out.println(templateField.getText());
 
-            templateField.click();
-            Thread.sleep(1000);
-            templateField.sendKeys(Keys.chord(Keys.CONTROL, "a") + Keys.BACK_SPACE + template);
-            Thread.sleep(300);
-            driver.findElement(By.id("id_submitbutton")).click();
-            Thread.sleep(100);
         }
 
     }
+
 
     public void loadCurPage(String urlS) throws IOException {
         driver.get(urlS);
@@ -355,7 +370,7 @@ public class WebSelenium implements AutoCloseable {
         for (WebElement a : aw.subList(0, aw.size() - 1)) {
             List<WebElement> tdList = a.findElements(By.tagName("td"));
             //for(WebElement w:tdList){
-              //  System.out.println(w.getText());
+            //  System.out.println(w.getText());
             //}
 
             ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
@@ -607,10 +622,8 @@ public class WebSelenium implements AutoCloseable {
             WebElement selectElem = driver.findElement(By.id("id_coderunnertype"));
             Select select = new Select(selectElem);
             select.selectByValue("java_program");
-
             try {
                 driver.switchTo().alert().accept();
-
             } catch (Exception e) {
                 // System.out.println(e+"");
             }
@@ -618,11 +631,57 @@ public class WebSelenium implements AutoCloseable {
             driver.findElement(By.id("id_submitbutton")).click();
             Thread.sleep(100);
         }
+    }
 
+    class Attempt{
+        String mail;
+        String state;
+        String starts;
+        String ends;
+        String tm;
+        double evaluation;
+        String href;
+        double sum;
+        String name;
+
+        public Attempt(String mail, String state, String starts, String ends, String tm, String evaluation, String href, double sum, String name) {
+            this.mail = mail;
+            this.state = state;
+            this.starts = starts;
+            this.ends = ends;
+            this.tm = tm;
+            this.evaluation = evaluation.length()<=1?0:Double.parseDouble(evaluation.replace(",","."));
+            this.href = href;
+            this.sum = sum;
+            this.name = name;
+        }
+
+
+
+        @Override
+        public String toString() {
+            return "name: " + name+" | "+
+                    "p: " +  evaluation + " |" +
+                    "sum: " + sum + "|" +
+                    ", href='" + href + '\'';
+        }
+
+        public int compareTo(Attempt a) {
+            if (this.evaluation>0)
+                return Double.compare(this.evaluation,a.evaluation);
+            else if (a.evaluation>0) return -1;
+            else return Double.compare(this.sum,a.sum);
+        }
 
     }
 
-    public void getAttempts(String attemptName) throws InterruptedException {
+    public static DateTime getDateTimeFromMdl(String mdl) throws ParseException {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMM y HH:mm");
+        DateTime dt = formatter.parseDateTime(mdl);
+        return dt;
+    }
+
+    public ArrayList<Attempt> getAttempts(String attemptName, boolean flgCode) throws InterruptedException {
         driver.get("http://mdl.sch239.net/course/view.php?id=44");
         Thread.sleep(1000);
         WebElement wTest = driver.findElement(By.xpath("//*[text()='" + attemptName + "']"));
@@ -635,6 +694,8 @@ public class WebSelenium implements AutoCloseable {
         WebElement elem = driver.findElement(By.id("attempts"));
         List<WebElement> trs = elem.findElements(By.tagName("tr"));
         trs = trs.subList(0, trs.size() - 2);
+        ArrayList <Attempt> aLst = new ArrayList<>();
+
         for (WebElement tr : trs) {
             List<WebElement> tdList = tr.findElements(By.tagName("td"));
             if (tdList.size() != 0) {
@@ -642,67 +703,47 @@ public class WebSelenium implements AutoCloseable {
                 if (tds.size() > 1) {
                     ArrayList<WebElement> hrLst = new ArrayList<WebElement>(tds.get(1).findElements(By.tagName("a")));
                     if (hrLst.size() == 2) {
-                        String attemptHref = hrLst.get(1).getAttribute("href");
+
                         String name = hrLst.get(0).getText();
-                        System.out.println(attemptHref + " " + name);
+                        String href = hrLst.get(1).getAttribute("href");
+                        Attempt at;
+                        if (flgCode) {
+                            ArrayList<WebElement> attemptList = getAList(tds.subList(8, tds.size()));
+                            double sum = 0;
+                            for (WebElement w : attemptList) {
+                                String s = w.getText();
+                                sum += s.length() <= 1 ? 0 : Double.parseDouble(s.replace(",", "."));
+                            }
 
-                        String mail = tds.get(2).getText();
-                        String state = tds.get(3).getText();
-                        String starts = tds.get(4).getText();
-                        String ends = tds.get(5).getText();
-                        String tm = tds.get(6).getText();
-                        String evaluation = tds.get(7).getText();
 
-                        ArrayList<WebElement> attemptList = getAList(tds.subList(8, tds.size()));
-                        for (WebElement w : attemptList) {
-                            System.out.print(" " + w.getText());
+                             at = new Attempt(
+                                    tds.get(2).getText(),
+                                    tds.get(3).getText(),
+                                    tds.get(4).getText(),
+                                    tds.get(5).getText(),
+                                    tds.get(6).getText(),
+                                    tds.get(7).getText(),
+                                    href,
+                                    sum,
+                                    name);
+                        }else{
+                            at = new Attempt(
+                                    tds.get(2).getText(),
+                                    tds.get(3).getText(),
+                                    tds.get(4).getText(),
+                                    tds.get(5).getText(),
+                                    tds.get(6).getText(),
+                                    "",
+                                    href,
+                                    0,
+                                    name);
                         }
-                        System.out.println();
+                        aLst.add(at);
+
                     }
                 }
             }
-/*
-            for (WebElement td : tds) {
-                i++;
-                switch (i){
-                    case 1:
-
-                    case 2:
-                        ArrayList<WebElement> hrLst = (td.findElements(By.tagName("a"));
-                        attemptHref = hr.getAttribute("href");
-                        String s [] = td.getText().split("\n");
-                        name = s[0];
-                        System.out.println(attemptHref+" "+name);
-                        break;
-                    case 3:
-                        mail = td.getText();
-                        break;
-                    case 4:
-                        state = td.getText();
-                        break;
-                    case 5:
-                        starts = td.getText();
-                        break;
-                    case 6:
-                        ends = td.getText();
-                        break;
-                    case 7:
-                        tm = td.getText();
-                        break;
-                    case 8:
-                        evaluation = td.getText();
-                        break;
-                    default:
-                        String s1 = td.getText();
-                        s1 = (s1=="-"?"0":s1);
-                        attemptList.add(s1);
-                }
-            }
-            for (String at:attemptList){
-                System.out.print(at);
-            }
-            System.out.println();*/
         }
-
+        return aLst;
     }
 }

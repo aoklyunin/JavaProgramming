@@ -7,6 +7,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -28,7 +29,7 @@ public class Main extends Application {
     private AnchorPane rootLayout;
     public VkApi vk;
     @Override
-    public void start(Stage primaryStage){
+    public void start(Stage primaryStage) throws SQLException, ClassNotFoundException {
        /* try {
             initErrLog();
         } catch (FileNotFoundException e) {
@@ -45,12 +46,13 @@ public class Main extends Application {
         //dbHelper.connect();
         //dbHelper.parceCsv();
 
-        //dbHelper.parceMailList();
+       // dbHelper.loadInfromaticFromFile();
       //  dbHelper.parceCsv();
        // CustomOperations customOperations = new CustomOperations();
        // customOperations.fillAnichkov();
         try {
-            CustomOperations.renameTests();
+            CustomOperations.dispAttempt("jhkjh");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

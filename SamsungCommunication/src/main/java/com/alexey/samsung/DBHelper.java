@@ -1,5 +1,9 @@
 package com.alexey.samsung;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayDeque;
@@ -12,30 +16,42 @@ import java.util.regex.Pattern;
 public class DBHelper implements AutoCloseable {
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DB_NAME = "Students";
+    private static final String DB_NAME = "students";
     static final String DB_URL = "jdbc:mysql://localhost/";
 
     private static final String KEY_VAL = "value";
     private static final String KEY_CKEY = "ckey";
 
     public static final String TABLE_SCOOLERS = "schoolers";
+    public static final String TABLE_INFORMATIC = "informatic";
 
-     static final String KEY_ID = "id";
-     static final String KEY_NAME = "name";
-     static final String KEY_MAIL = "mail";
-     static final String KEY_VK = "vk";
-     static final String KEY_GITHUB = "github";
-     static final String KEY_M_LOGIN = "mlogin";
-     static final String KEY_M_PASSWORD = "mpassword";
-     static final String KEY_TEL = "tel";
-     static final String KEY_ADDITIONAL = "additional";
-     static final String KEY_PROJECT = "project";
+    static final String KEY_ID = "id";
+    static final String KEY_NAME = "name";
+    static final String KEY_MAIL = "mail";
+    static final String KEY_VK = "vk";
+    static final String KEY_GITHUB = "github";
+    static final String KEY_M_LOGIN = "mlogin";
+    static final String KEY_M_PASSWORD = "mpassword";
+    static final String KEY_TEL = "tel";
+    static final String KEY_ADDITIONAL = "additional";
+    static final String KEY_PROJECT = "project";
+    static final String KEY_GROUP = "groupNumber";
+    static final String KEY_ATTEMPT_TYPE = "a_type";
+    static final String KEY_STATE = "state";
+    static final String KEY_STARTS = "starts";
+    static final String KEY_ENDS = "ends";
+    static final String KEY_TM = "tm";
+    static final String KEY_EVAULATION = "evaulation";
+    static final String KEY_HREF = "href";
+    static final String KEY_SUM = "sum";
+    static final String KEY_TEST_NAME = "test_name";
 
 
     static final String USER = "root";
     static final String PASS = "toor";
 
     static final String confTable = "CONF_TABLE";
+    static final String attemptTable = "attempts";
 
     Connection conn = null;
     Statement stmt = null;
@@ -103,6 +119,21 @@ public class DBHelper implements AutoCloseable {
         return q;
     }
 
+    // генерация из массива строк sql записей
+    private String getQueryValues(String[] values) {
+        String q = " VALUES ";
+        q += "(";
+        for (String key : values
+                ) {
+            q += key + ", ";
+        }
+        q = q.substring(0, q.length() - 2);
+        q += "), ";
+        q = q.substring(0, q.length() - 2);
+        q += ";";
+        return q;
+    }
+
     // добавить одну запись с явным указанием ключей через словарь
     public void addRecord(String tableName, Map<String, String> m) throws SQLException {
         String[][] sArr = new String[1][m.size()];
@@ -123,9 +154,30 @@ public class DBHelper implements AutoCloseable {
         addRecords(tableName, keys, sArr);
     }
 
+    // добавить одну запись с явным указанием ключей через массивы
+    public void addAttemptRecord(String tableName, String[] values, String condition) throws SQLException {
+        String q = "INSERT INTO "+tableName+" SELECT * FROM (SELECT ";
+        for (int i = 0; i < 5 ; i++) {
+            q+= values[i]+", ";
+        }
+        q += values[5]+" AS starttime"+", ";
+        q += values[6]+" AS endtime"+", ";
+        q += values[7]+", ";
+        q += values[8]+" AS evaluation"+", ";
+        q += values[9]+", ";
+        q += values[10]+" AS sum"+", ";
+        q += values[11]+", ";
+        q += values[12];
+        q+= ") AS tmp WHERE NOT EXISTS ( SELECT id FROM "+ tableName+" WHERE " + condition + ") LIMIT 1";
+
+        System.out.println(q);
+        query(q);
+    }
+
+
     // добавить записи с явным указанием ключей
-    private void addRecords(String tableName, String[] keys, String[][] values) throws SQLException {
-        String q = "INSERT INTO " + tableName + "(";
+    public void addRecords(String tableName, String[] keys, String[][] values) throws SQLException {
+        String q = "INSERT INTO " + tableName + " (";
         for (String s : keys) {
             q += s + ", ";
         }
@@ -136,9 +188,16 @@ public class DBHelper implements AutoCloseable {
     }
 
     // добавить записи без указания ключей
-    private void addRecords(String tableName, String[][] values) throws SQLException {
+    public void addRecords(String tableName, String[][] values) throws SQLException {
         String q = "INSERT INTO " + tableName + " " + getQueryValues(values);
-        //System.out.println(q);
+        System.out.println(q);
+        query(q);
+    }
+
+    // добавить записи без указания ключей
+    public void addRecords(String tableName, String[][] values, String condition) throws SQLException {
+        String q = "INSERT INTO " + tableName + " " + getQueryValues(values);
+        System.out.println(q);
         query(q);
     }
 
@@ -175,21 +234,20 @@ public class DBHelper implements AutoCloseable {
     }
 
 
-
-    public ArrayList<HashMap<String,String>>  getStudentRecs() throws SQLException {
+    public ArrayList<HashMap<String, String>> getStudentRecs() throws SQLException {
         String q = "SELECT * FROM " + TABLE_SCOOLERS;
         //System.out.println(q);
         ResultSet rs = stmt.executeQuery(q);
-        ArrayList<HashMap<String,String>> lst = new ArrayList<>();
+        ArrayList<HashMap<String, String>> lst = new ArrayList<>();
         while (rs.next()) {
-            HashMap<String,String> hm = new HashMap<>();
+            HashMap<String, String> hm = new HashMap<>();
             lst.add(hm);
-            hm.put(KEY_GITHUB,rs.getString(KEY_GITHUB));
-            hm.put(KEY_M_LOGIN,rs.getString(KEY_M_LOGIN));
-            hm.put(KEY_M_PASSWORD,rs.getString(KEY_M_PASSWORD));
-            hm.put(KEY_NAME,rs.getString(KEY_NAME));
-            hm.put(KEY_VK,rs.getString(KEY_VK));
-            hm.put(KEY_TEL,rs.getString(KEY_TEL));
+            hm.put(KEY_GITHUB, rs.getString(KEY_GITHUB));
+            hm.put(KEY_M_LOGIN, rs.getString(KEY_M_LOGIN));
+            hm.put(KEY_M_PASSWORD, rs.getString(KEY_M_PASSWORD));
+            hm.put(KEY_NAME, rs.getString(KEY_NAME));
+            hm.put(KEY_VK, rs.getString(KEY_VK));
+            hm.put(KEY_TEL, rs.getString(KEY_TEL));
         }
         return lst;
     }
@@ -236,9 +294,9 @@ public class DBHelper implements AutoCloseable {
                     if (!chechStudentRecordByMail(commandstring.replace(" ", ""))) {
 
                         sender.sendMail(subject,
-                                        body,
-                                        "aoklyunin@gmail.com",
-                                        commandstring);
+                                body,
+                                "aoklyunin@gmail.com",
+                                commandstring);
                         System.out.println(commandstring);
                     }
                 } catch (SQLException e) {
@@ -287,8 +345,6 @@ public class DBHelper implements AutoCloseable {
 
                 }
                 cnt++;
-
-
                 if (flgAdd) {
                     sList.add(sl);
                 }
@@ -324,8 +380,65 @@ public class DBHelper implements AutoCloseable {
         // Questions.generateVariants();
     }
 
+    class InformaticStudent {
+        int group;
+        String name;
 
-    // записать значение в базу
+        InformaticStudent(String s) {
+            String[] sArr = s.split(" ");
+            group = Integer.parseInt(sArr[0]);
+            name = sArr[1] + " " + sArr[2];
+        }
+
+    }
+
+    public static String toSQLDTString(DateTime dt) {
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-d HH:mm:ss");
+        return "\'" + fmt.print(dt) + "\'";
+    }
+
+    public void loadInfromaticFromFile() {
+        try (BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(getClass().getResourceAsStream("/source/informatic.txt")))) {
+            String commandstring;
+            ArrayList<InformaticStudent> iLst = new ArrayList<>();
+            while ((commandstring = bufferedReader.readLine()) != null) {
+                iLst.add(new InformaticStudent(commandstring));
+            }
+            String[][] sArr = new String[iLst.size()][3];
+            for (int i = 0; i < iLst.size(); i++) {
+                sArr[i][0] = "NULL";
+                sArr[i][1] = toSQLString(iLst.get(i).name);
+                sArr[i][2] = iLst.get(i).group + "";
+            }
+            String kArr[] = {
+                    KEY_ID, KEY_NAME, KEY_GROUP
+            };
+
+            addRecords(TABLE_INFORMATIC, kArr, sArr);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Fuck");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<String[]> getInformaticSchooler() throws SQLException {
+        String query = "SELECT * FROM " + TABLE_INFORMATIC;
+        ResultSet rs = stmt.executeQuery(query);
+        //String login,String password, String name, String mail
+        ArrayList<String[]> lst = new ArrayList<>();
+        while (rs.next()) {
+            String [] sArr = new String[2];
+            lst.add(sArr);
+            sArr[0] = rs.getString(KEY_NAME);
+            sArr[1] = rs.getInt(KEY_ID)+"";
+        }
+        return lst;
+    }
+
+        // записать значение в базу
     public void setConfVal(String key, String val) throws SQLException {
         if (getConfVal(key) == null) {
             String[] keys = {KEY_CKEY, KEY_VAL};
