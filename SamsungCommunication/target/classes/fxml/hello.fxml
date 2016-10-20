@@ -1,36 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-
 <?import javafx.scene.text.Text?>
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="948.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alexey.samsung.controller.MainController">
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="948.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alexey.samsung.controller.MainController">
    <children>
       <SplitPane dividerPositions="0.6610738255033557" orientation="VERTICAL" prefHeight="300.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <TableView prefHeight="194.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <columns>
-                      <TableColumn prefWidth="119.0" text="Фамилия Имя" />
-                      <TableColumn minWidth="0.0" prefWidth="91.0" text="почта" />
-                        <TableColumn minWidth="0.0" prefWidth="102.0" text="VK" />
-                        <TableColumn prefWidth="92.0" text="Github" />
-                        <TableColumn prefWidth="99.0" text="m-логин" />
-                        <TableColumn prefWidth="101.0" text="m-пароль" />
-                        <TableColumn prefWidth="88.0" text="Телефон" />
-                        <TableColumn prefWidth="105.0" text="Дополнительно" />
-                        <TableColumn prefWidth="148.0" text="Проект" />
-                    </columns>
-                  </TableView>
+                  <ScrollPane prefHeight="259.0" prefWidth="946.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <TableView fx:id="attemptTable" prefHeight="256.0" prefWidth="944.0" />
+                     </content>
+                  </ScrollPane>
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <Button fx:id="button" layoutX="36.0" layoutY="24.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="87.0" text="Button" />
-                  <Button fx:id="vkButton" layoutX="40.0" layoutY="66.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="VK"/>
+                  <Button fx:id="button" layoutX="593.0" layoutY="23.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="170.0" text="Добавить задание" />
+                  <Button fx:id="vkButton" layoutX="593.0" layoutY="66.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="VK" />
+                  <DatePicker fx:id="startDP" layoutX="114.0" layoutY="24.0" />
+                  <DatePicker fx:id="endDP" layoutX="360.0" layoutY="24.0" />
+                  <Text layoutX="34.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Начиная с" />
+                  <Text layoutX="330.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="до" />
+                  <CheckBox fx:id="group1enable" layoutX="150.0" layoutY="70.0" mnemonicParsing="false" text="Первая группа" />
+                  <CheckBox fx:id="group2enable" layoutX="298.0" layoutY="70.0" mnemonicParsing="false" text="Вторая группа" />
+                  <Button fx:id="showBtn" layoutX="34.0" layoutY="66.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="97.0" text="Показать" />
 
                </children>
             </AnchorPane>

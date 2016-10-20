@@ -135,12 +135,12 @@ public class CustomOperations {
             };
 
             for (String [] test:tests) {
-                ArrayList<WebSelenium.Attempt> lst =
+                ArrayList<Attempt> lst =
                         webSelenium.getAttempts(test[0], test[1].equals("1"));
                 dbHelper.connect();
 
                 for (int i = 0; i < lst.size(); i++) {
-                    WebSelenium.Attempt a = lst.get(i);
+                    Attempt a = lst.get(i);
                     String sArr[] = new String[13];
                     //System.out.println(+"");
                     sArr[0] = "NULL";
@@ -164,6 +164,12 @@ public class CustomOperations {
         }
     }
 
+    public static String reverseName(String s){
+        if (!s.contains(" "))
+            return s;
+        String [] sArr = s.split(" ");
+        return sArr[1]+" "+sArr[0];
+    }
     public static void copyQuestions() throws Exception {
         try (WebSelenium webSelenium = new WebSelenium()) {
             webSelenium.loginToMdl();
