@@ -40,46 +40,12 @@ public class Main extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("SamsungCommunication");
 
-        //CustomOperations.getUnregistredYsersFromConf();
         initRootLayout();
-        //DBHelper dbHelper= new DBHelper();
-        //dbHelper.connect();
-        //dbHelper.parceCsv();
-
-       // dbHelper.loadInfromaticFromFile();
-      //  dbHelper.parceCsv();
-       // CustomOperations customOperations = new CustomOperations();
-       // customOperations.fillAnichkov();
         try {
-            CustomOperations.dispAttempt("jhkjh");
-
+          //  CustomOperations.dispAttempt("jhkjh");
         } catch (Exception e) {
             e.printStackTrace();
         }
-/*
-        try(WebSelenium webSelenium = new WebSelenium("203.223.143.51:8080")) {
-            System.out.println("load2");
-            System.out.println(webSelenium.getIpFromPage());
-            Thread.sleep(1000);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        try(WebSelenium webSelenium = new WebSelenium()) {
-            System.out.println("load1");
-            System.out.println(webSelenium.getIpFromPage());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        try(WebSelenium webSelenium = new WebSelenium("77.123.18.56:81")) {
-            System.out.println("load3");
-            System.out.println(webSelenium.getIpFromPage());
-            Thread.sleep(1000);
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
-
         //System.out.println(WebSelenium.loadCurPageHTTP("http://google.com"));
        /* GMailSender sender = new GMailSender("aoklyunin@gmail.com", "aoklyunin1990");
         sender.sendMail("Тестовое письмо",
@@ -89,7 +55,7 @@ public class Main extends Application {
 
         System.out.println("Completed");*/
         //vk = new VkApi();
-        primaryStage.close();
+
     }
 
 

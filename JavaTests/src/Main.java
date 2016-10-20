@@ -9,8 +9,5 @@ public class Main {
         boolean a = (x>=-3&&x<=5||x>=9&&x<=15);
         System.out.println(a);
 
-
-
-
     }
 }
