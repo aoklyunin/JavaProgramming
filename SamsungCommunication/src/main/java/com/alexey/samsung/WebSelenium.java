@@ -685,7 +685,9 @@ public class WebSelenium implements AutoCloseable {
                                     tds.get(7).getText(),
                                     href,
                                     sum,
-                                    name);
+                                    name,
+                                     attemptName,
+                                     DateTime.now());
                         }else{
                             at = new Attempt(
                                     tds.get(2).getText(),
@@ -696,7 +698,9 @@ public class WebSelenium implements AutoCloseable {
                                     "",
                                     href,
                                     0,
-                                    name);
+                                    name,
+                                    attemptName,
+                                    DateTime.now());
                         }
                         aLst.add(at);
 

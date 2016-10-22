@@ -7,6 +7,7 @@ import org.joda.time.format.DateTimeFormatter;
 import javax.swing.text.DateFormatter;
 import java.io.*;
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class DBHelper implements AutoCloseable {
     static final String KEY_EST_3 = "est3";
     static final String KEY_EST_4 = "est4";
     static final String KEY_EST_5 = "est5";
+    static final String KEY_ADD_TIME = "addTime";
 
 
     static final String USER = "root";
@@ -415,6 +417,11 @@ public class DBHelper implements AutoCloseable {
 
 
     public Attempt getAFromResultSet(ResultSet rs) throws SQLException {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("y-MM-dd HH:mm:ss");
+        String dateTimeStr = rs.getString(KEY_ADD_TIME);
+        DateTime dt = formatter.parseDateTime(dateTimeStr.contains(".")?
+                dateTimeStr.substring(0, dateTimeStr.indexOf(".")-1):dateTimeStr);
+
         Attempt at = new Attempt(
                 rs.getString(KEY_MAIL),
                 rs.getString(KEY_STATE),
@@ -424,7 +431,10 @@ public class DBHelper implements AutoCloseable {
                 rs.getFloat(KEY_EVAULATION) + "",
                 rs.getString(KEY_HREF),
                 rs.getFloat(KEY_SUM),
-                rs.getString(KEY_NAME));
+                rs.getString(KEY_NAME),
+                rs.getString(KEY_TEST_NAME),
+                dt
+                );
         return at;
     }
 

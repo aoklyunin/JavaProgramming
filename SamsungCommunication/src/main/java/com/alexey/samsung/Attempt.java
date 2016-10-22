@@ -1,20 +1,28 @@
 package com.alexey.samsung;
 
+import org.joda.time.DateTime;
+
+import java.sql.Date;
+
 /**
  * Created by teacher on 20.10.16.
  */
 public class Attempt{
-    String mail;
-    String state;
-    String starts;
-    String ends;
-    String tm;
-    double evaluation;
-    String href;
-    double sum;
-    String name;
+    public String mail;
+    public String state;
+    public String starts;
+    public String ends;
+    public String tm;
+    public double evaluation;
+    public String href;
+    public double sum;
+    public String name;
+    public String testName;
+    public DateTime addDate;
 
-    public Attempt(String mail, String state, String starts, String ends, String tm, String evaluation, String href, double sum, String name) {
+    public Attempt(String mail, String state, String starts, String ends,
+                   String tm, String evaluation, String href, double sum,
+                   String name, String testName, DateTime addDate) {
         this.mail = mail;
         this.state = state;
         this.starts = starts;
@@ -24,6 +32,9 @@ public class Attempt{
         this.href = href;
         this.sum = sum;
         this.name = name;
+        this.testName = testName;
+        this.addDate = addDate;
+
     }
 
 

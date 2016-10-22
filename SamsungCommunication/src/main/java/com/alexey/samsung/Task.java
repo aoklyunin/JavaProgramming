@@ -2,6 +2,8 @@ package com.alexey.samsung;
 
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by teacher on 20.10.16.
@@ -27,5 +29,13 @@ public class Task {
                 "date=" + date +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    public static List<String> getTaskNameList(ArrayList<Task> alst){
+        List<String>lst = new ArrayList<>();
+        for(Task at:alst){
+            lst.add(at.name);
+        }
+        return lst;
     }
 }
