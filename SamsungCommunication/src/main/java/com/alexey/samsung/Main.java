@@ -5,6 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -55,6 +58,12 @@ public class Main extends Application {
 
         System.out.println("Completed");*/
         //vk = new VkApi();
+     /*   try(DBHelper dbHelper = new DBHelper()){
+            dbHelper.connect();
+            dbHelper.loadInfromaticFromFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
 
     }
 

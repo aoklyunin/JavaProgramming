@@ -26,6 +26,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -92,7 +94,7 @@ public class WebSelenium implements AutoCloseable {
         //driver.manage().window().
     }
 
-    WebSelenium() {
+    public WebSelenium() {
         capabilities = DesiredCapabilities.chrome();
         if (System.getProperty("os.name").contains("inux")) {
             System.setProperty("webdriver.chrome.driver", "chromedriver");
@@ -235,6 +237,45 @@ public class WebSelenium implements AutoCloseable {
 
     public void loadCurPage(String urlS) throws IOException {
         driver.get(urlS);
+    }
+
+    public void loadCurPageWithCloseWaiting(String urlS) throws IOException {
+        driver.get(urlS);
+        Boolean check = false;
+
+        while (!check) {
+            try {
+                driver.getTitle();
+                Thread.sleep(200);
+            } catch (Exception e) {
+                //you can verify correct exception here ie not reachable, dead etc..
+                check = true;
+            }
+
+        }
+    }
+
+    public String getAllAteemptText(String href) throws InterruptedException {
+        String s = "";
+        driver.get(href);
+        List<WebElement> qs = driver.findElements(By.xpath("//*[@id=\"mod_quiz_navblock\"]/div[2]/div[1]/a"));
+        HashSet <String> hrefs = new HashSet<>();
+        hrefs.add(href);
+        for(WebElement q:qs){
+            String link = q.getText();
+            if(link.contains("&page"))
+                hrefs.add(link);
+        }
+        int i =0;
+        for(String link:hrefs){
+            driver.get(link);
+            List<WebElement> textes = driver.findElements(By.className("ablock"));
+            for(WebElement text:textes){
+                s+="\n--------------------------------\n";
+                s+= (++i)+"\n--------------------------------\n"+ text.getText()+"\n";
+            }
+        }
+        return s;
     }
 
     @Override
@@ -634,14 +675,14 @@ public class WebSelenium implements AutoCloseable {
     }
 
 
-
     public static DateTime getDateTimeFromMdl(String mdl) throws ParseException {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMM y HH:mm");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMM y HH:mm").withLocale(Locale.ENGLISH);
         DateTime dt = formatter.parseDateTime(mdl);
         return dt;
     }
 
     public ArrayList<Attempt> getAttempts(String attemptName, boolean flgCode) throws InterruptedException {
+
         driver.get("http://mdl.sch239.net/course/view.php?id=44");
         Thread.sleep(1000);
         WebElement wTest = driver.findElement(By.xpath("//*[text()='" + attemptName + "']"));
@@ -654,59 +695,79 @@ public class WebSelenium implements AutoCloseable {
         WebElement elem = driver.findElement(By.id("attempts"));
         List<WebElement> trs = elem.findElements(By.tagName("tr"));
         trs = trs.subList(0, trs.size() - 2);
-        ArrayList <Attempt> aLst = new ArrayList<>();
+        ArrayList<Attempt> aLst = new ArrayList<>();
+        try (DBHelper dbHelper = new DBHelper()) {
+            dbHelper.connect();
 
-        for (WebElement tr : trs) {
-            List<WebElement> tdList = tr.findElements(By.tagName("td"));
-            if (tdList.size() != 0) {
-                ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
-                if (tds.size() > 1) {
-                    ArrayList<WebElement> hrLst = new ArrayList<WebElement>(tds.get(1).findElements(By.tagName("a")));
-                    if (hrLst.size() == 2) {
+            int taskId = dbHelper.getIdByTaskName(attemptName);
+            if (taskId == -1 || taskId < 20) {
+                System.out.println("Тест не найден");
+                return aLst;
+            }
 
-                        String name = hrLst.get(0).getText();
-                        String href = hrLst.get(1).getAttribute("href");
-                        Attempt at;
-                        if (flgCode) {
-                            ArrayList<WebElement> attemptList = getAList(tds.subList(8, tds.size()));
-                            double sum = 0;
-                            for (WebElement w : attemptList) {
-                                String s = w.getText();
-                                sum += s.length() <= 1 ? 0 : Double.parseDouble(s.replace(",", "."));
+            for (WebElement tr : trs) {
+                List<WebElement> tdList = tr.findElements(By.tagName("td"));
+                if (tdList.size() != 0) {
+                    ArrayList<WebElement> tds = new ArrayList<WebElement>(tdList);
+                    if (tds.size() > 1) {
+                        ArrayList<WebElement> hrLst = new ArrayList<WebElement>(tds.get(1).findElements(By.tagName("a")));
+                        if (hrLst.size() == 2) {
+
+                            String name = hrLst.get(0).getText();
+                            int name_id = 0;
+                            int task_id = 0;
+                            String href = hrLst.get(1).getAttribute("href");
+                            Attempt at;
+                            int usId = dbHelper.getIdByStudentName(CustomOperations.reverseName(name));
+                            if (usId == -1) {
+                                System.out.println("Пользователь не найден");
+                                continue;
                             }
 
+                            if (flgCode) {
 
-                             at = new Attempt(
-                                    tds.get(2).getText(),
-                                    tds.get(3).getText(),
-                                    tds.get(4).getText(),
-                                    tds.get(5).getText(),
-                                    tds.get(6).getText(),
-                                    tds.get(7).getText(),
-                                    href,
-                                    sum,
-                                    name,
-                                     attemptName,
-                                     DateTime.now());
-                        }else{
-                            at = new Attempt(
-                                    tds.get(2).getText(),
-                                    tds.get(3).getText(),
-                                    tds.get(4).getText(),
-                                    tds.get(5).getText(),
-                                    tds.get(6).getText(),
-                                    "",
-                                    href,
-                                    0,
-                                    name,
-                                    attemptName,
-                                    DateTime.now());
+                                ArrayList<WebElement> attemptList = getAList(tds.subList(8, tds.size()));
+                                double sum = 0;
+                                for (WebElement w : attemptList) {
+                                    String s = w.getText();
+                                    Pattern p = Pattern.compile("[а-я]");
+                                    Matcher m = p.matcher(s);
+                                    if (!m.find())
+                                        sum += s.length() <= 1 ? 0 : Double.parseDouble(s.replace(",", "."));
+                                }
+                                at = new Attempt(
+                                        task_id,
+                                        tds.get(3).getText(),
+                                        getDateTimeFromMdl(tds.get(4).getText()),
+                                        tds.get(5).getText().equals("-")?new DateTime(0):getDateTimeFromMdl( tds.get(5).getText()),
+                                        tds.get(6).getText(),
+                                        tds.get(7).getText(),
+                                        href,
+                                        sum,
+                                        usId,
+                                        DateTime.now());
+                            } else {
+                                at = new Attempt(
+                                        task_id,
+                                        tds.get(3).getText(),
+                                        WebSelenium.getDateTimeFromMdl(tds.get(4).getText()),
+                                        tds.get(5).getText().equals("-")?new DateTime(0):getDateTimeFromMdl( tds.get(5).getText()),
+                                        tds.get(6).getText(),
+                                        tds.get(7).getText(),
+                                        href,
+                                        0,
+                                        usId,
+                                        DateTime.now());
+                                System.out.println(tds.get(7).getText());
+                            }
+                            aLst.add(at);
+
                         }
-                        aLst.add(at);
-
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return aLst;
     }

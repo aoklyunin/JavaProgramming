@@ -120,44 +120,35 @@ public class CustomOperations {
         }
     }
 
-
-    public static void getAttemps() throws Exception {
+    public static void getAttemps( ArrayList<Task> tasks) throws Exception {
         try (WebSelenium webSelenium = new WebSelenium();DBHelper dbHelper = new DBHelper()) {
             webSelenium.loginToMdl();
             Thread.sleep(1000);
-            String tests[][] = {
-                    {"01_Модель вход-выход_тест ДЗ","0"},
-                    {"02_Модель вход-выход 2_тест(в классе)","0"},
-                    {"03_Комплексные числа(в классе)","0"},
-                    {"03_Комплексные числа ДЗ_тест","0"},
-                    {"04_Свободная составляющая","0"},
-                    {"05_Матрицы","0"},
-            };
 
-            for (String [] test:tests) {
+            for (Task t:tasks) {
+               // if (t.id<20) continue;
                 ArrayList<Attempt> lst =
-                        webSelenium.getAttempts(test[0], test[1].equals("1"));
+                        webSelenium.getAttempts(t.name, t.t_type==0);
                 dbHelper.connect();
 
                 for (int i = 0; i < lst.size(); i++) {
                     Attempt a = lst.get(i);
-                    String sArr[] = new String[13];
+                    String sArr[] = new String[11];
                     //System.out.println(+"");
                     sArr[0] = "NULL";
-                    sArr[1] = DBHelper.toSQLString(a.name);
-                    sArr[2] = DBHelper.toSQLString(a.mail);
-                    sArr[3] = test[1];
-                    sArr[4] = DBHelper.toSQLString(a.state);
-                    sArr[5] = DBHelper.toSQLDTString(WebSelenium.getDateTimeFromMdl(a.starts));
-                    sArr[6] = DBHelper.toSQLDTString(a.ends.equals("-")?new DateTime(0):WebSelenium.getDateTimeFromMdl(a.ends));
-                    sArr[7] = DBHelper.toSQLString(a.tm);
-                    sArr[8] = a.evaluation+"";
-                    sArr[9] = DBHelper.toSQLString(a.href);
-                    sArr[10] = a.sum+"";
-                    sArr[11] = DBHelper.toSQLString(test[0]);
-                    sArr[12] = DBHelper.toSQLDTString(DateTime.now());
+                    sArr[1] = a.student_id+"";
+                    sArr[2] = t.id+"";
+                    sArr[3] = DBHelper.toSQLString(a.state);
+                    sArr[4] = DBHelper.toSQLDTString(a.starts);
+                    sArr[5] = DBHelper.toSQLDTString(a.ends);
+                    sArr[6] = DBHelper.toSQLString(a.tm);
+                    sArr[7] = a.evaluation+"";
+                    sArr[8] = DBHelper.toSQLString(a.href);
+                    sArr[9] = a.sum+"";
+                    sArr[10] = DBHelper.toSQLDTString(DateTime.now());
                     //  System.out.println(a);
-                    String condition = DBHelper.KEY_MAIL+" = "+ sArr[2]+" AND "+DBHelper.KEY_SUM+"="+sArr[10];
+                    String condition = DBHelper.KEY_STUDENT_ID+" = "+ sArr[1]+" AND "+DBHelper.KEY_SUM+"="+sArr[9]+
+                            " AND " +DBHelper.KEY_TASK_ID+"="+sArr[2];
                     dbHelper.addAttemptRecord(DBHelper.attemptTable,sArr,condition);
                 }
             }

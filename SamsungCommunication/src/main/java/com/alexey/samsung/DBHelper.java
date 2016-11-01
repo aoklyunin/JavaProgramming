@@ -20,13 +20,12 @@ public class DBHelper implements AutoCloseable {
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_NAME = "students";
-    static final String DB_URL = "jdbc:mysql://localhost/";
+    static final String DB_URL = "jdbc:mysql://localhost/?useUnicode=true&characterEncoding=utf8";
 
     private static final String KEY_VAL = "value";
     private static final String KEY_CKEY = "ckey";
 
     public static final String TABLE_SCOOLERS = "schoolers";
-    public static final String TABLE_INFORMATIC = "informatic";
 
     static final String KEY_ID = "id";
     static final String KEY_NAME = "name";
@@ -47,6 +46,12 @@ public class DBHelper implements AutoCloseable {
     static final String KEY_EVAULATION = "evaulation";
     static final String KEY_HREF = "href";
     static final String KEY_SUM = "sum";
+    static final String KEY_ADD_TIME = "addTime";
+
+    static final String KEY_STUDENT_ID = "student_id";
+    static final String KEY_TASK_ID = "task_id";
+    // таблица заданий
+    public static final String taskTable = "tasks";
     static final String KEY_TEST_NAME = "test_name";
     static final String KEY_TEST_TYPE = "t_type";
     static final String KEY_WORK_TYPE = "w_type";
@@ -56,7 +61,10 @@ public class DBHelper implements AutoCloseable {
     static final String KEY_EST_3 = "est3";
     static final String KEY_EST_4 = "est4";
     static final String KEY_EST_5 = "est5";
-    static final String KEY_ADD_TIME = "addTime";
+
+    // таблица учеников информатики
+    public static final String TABLE_INFORMATIC = "informatic";
+
 
 
     static final String USER = "root";
@@ -64,7 +72,6 @@ public class DBHelper implements AutoCloseable {
 
     static final String confTable = "CONF_TABLE";
     static final String attemptTable = "attempts";
-    public static final String taskTable = "tasks";
 
     Connection conn = null;
     Statement stmt = null;
@@ -101,6 +108,10 @@ public class DBHelper implements AutoCloseable {
         conn = DriverManager.getConnection(DB_URL, USER, PASS);
         System.out.println("Подключились к базе");
         stmt = conn.createStatement();
+        query("SET NAMES 'utf8';");
+        query("SET CHARACTER SET 'utf8';");
+        query("SET SESSION collation_connection = 'utf8_general_ci';");
+
         query("USE " + DB_NAME + ";");
     }
 
@@ -167,22 +178,70 @@ public class DBHelper implements AutoCloseable {
         addRecords(tableName, keys, sArr);
     }
 
+    public int getIdByStudentName(String name) throws SQLException, UnsupportedEncodingException {
+        //name = new String(name.getBytes("Cp1251"), "UTF-8");
+        String query = "SELECT * FROM " + TABLE_INFORMATIC +" WHERE NAME="+ toSQLString(name);
+        System.out.println(query);
+        ResultSet rs = stmt.executeQuery(query);
+
+        int id = -1;
+        while (rs.next()) {
+            id =  rs.getInt(KEY_ID);
+        }
+        return id;
+    }
+    public int getIdByTaskName(String name) throws SQLException, UnsupportedEncodingException {
+        //name = new String(name.getBytes("Cp1251"), "UTF-8");
+        String query = "SELECT * FROM " + taskTable +" WHERE "+KEY_TEST_NAME+"="+ toSQLString(name);
+        System.out.println(query);
+        ResultSet rs = stmt.executeQuery(query);
+        int id = -1;
+        while (rs.next()) {
+            id =  rs.getInt(KEY_ID);
+        }
+        return id;
+    }
+
+    public int getEstimateByVal(Attempt at) throws SQLException {
+        if (Math.max(at.sum,at.evaluation)<0.1) return 1;
+
+        Task task = getTaskById(at.task_id);
+        int est = 0;
+        int i = 0;
+        int max = 0;
+        for (String e:task.ests){
+            i++;
+            String [] es = e.split(",");
+            for(String s:es){
+                try{
+                    int n = Integer.parseInt(s);
+                    max = Math.max(n,max);
+                    if (Math.round(Math.max(at.sum,at.evaluation))==n) return i;
+                }catch (Exception ex){
+
+                }
+            }
+
+        }
+        if (Math.max(at.sum,at.evaluation)>max) return 5;
+        return -1;
+    }
+
     // добавить одну запись с явным указанием ключей через массивы
     public void addAttemptRecord(String tableName, String[] values, String condition) throws SQLException {
         String q = "INSERT INTO " + tableName + " SELECT * FROM (SELECT ";
-        for (int i = 0; i < 5; i++) {
-            q += values[i] + ", ";
-        }
-        q += values[5] + " AS starttime" + ", ";
-        q += values[6] + " AS endtime" + ", ";
-        q += values[7] + ", ";
-        q += values[8] + " AS evaluation" + ", ";
-        q += values[9] + ", ";
-        q += values[10] + " AS sum" + ", ";
-        q += values[11] + ", ";
-        q += values[12];
+        q+= values[0]+", ";
+        q+= values[1]+" AS us_id ,";
+        q+= values[2]+" AS task_id ,";
+        q+= values[3]+" ,";
+        q += values[4] + " AS starttime" + ", ";
+        q += values[5] + " AS endtime" + ", ";
+        q += values[6] + ", ";
+        q += values[7] + " AS evaluation" + ", ";
+        q += values[8] + ", ";
+        q += values[9] + " AS sum" + ", ";
+        q += values[10];
         q += ") AS tmp WHERE NOT EXISTS ( SELECT id FROM " + tableName + " WHERE " + condition + ") LIMIT 1";
-
         System.out.println(q);
         query(q);
     }
@@ -198,6 +257,48 @@ public class DBHelper implements AutoCloseable {
         q += ")" + getQueryValues(values);
         System.out.println(q);
         query(q);
+    }
+
+    public Task getTaskById(int id) throws SQLException {
+            //name = new String(name.getBytes("Cp1251"), "UTF-8");
+            String query = "SELECT * FROM " + taskTable +" WHERE "+KEY_ID+"="+ id;
+            System.out.println(query);
+            ResultSet rs = stmt.executeQuery(query);
+            if (rs.next())
+                return new Task(rs);
+            else
+                return null;
+    }
+    public Schooler getScoolerById(int id) throws SQLException {
+        //name = new String(name.getBytes("Cp1251"), "UTF-8");
+        String query = "SELECT * FROM " + TABLE_INFORMATIC +" WHERE "+KEY_ID+"="+ id;
+        System.out.println(query);
+        ResultSet rs = stmt.executeQuery(query);
+        if(rs.next())
+            return new Schooler(rs);
+        else
+            return null;
+    }
+    public Attempt getAttemptByIds(int taskId, int schoolerId) throws SQLException {
+        //name = new String(name.getBytes("Cp1251"), "UTF-8");
+        String query = "SELECT * FROM " + attemptTable +" WHERE "+KEY_TASK_ID+"="+ taskId+" AND "+KEY_STUDENT_ID+"="+schoolerId;
+        System.out.println(query);
+        ResultSet rs = stmt.executeQuery(query);
+        if(rs.next())
+            return new Attempt(rs);
+        else
+            return null;
+
+    }
+    public ArrayList<Attempt> getAttemptByTaskId(int taskId) throws SQLException {
+        //name = new String(name.getBytes("Cp1251"), "UTF-8");
+        String query = "SELECT * FROM " + attemptTable +" WHERE "+KEY_TASK_ID+"="+ taskId;
+        System.out.println(query);
+        ResultSet rs = stmt.executeQuery(query);
+        ArrayList<Attempt> attempts = new ArrayList<>();
+        while(rs.next())
+            attempts.add(new Attempt(rs));
+        return attempts;
     }
 
     // добавить записи без указания ключей
@@ -421,39 +522,7 @@ public class DBHelper implements AutoCloseable {
         String dateTimeStr = rs.getString(KEY_ADD_TIME);
         DateTime dt = formatter.parseDateTime(dateTimeStr.contains(".")?
                 dateTimeStr.substring(0, dateTimeStr.indexOf(".")-1):dateTimeStr);
-
-        Attempt at = new Attempt(
-                rs.getString(KEY_MAIL),
-                rs.getString(KEY_STATE),
-                rs.getDate(KEY_STARTS) + "",
-                rs.getDate(KEY_ENDS) + "",
-                rs.getString(KEY_TM),
-                rs.getFloat(KEY_EVAULATION) + "",
-                rs.getString(KEY_HREF),
-                rs.getFloat(KEY_SUM),
-                rs.getString(KEY_NAME),
-                rs.getString(KEY_TEST_NAME),
-                dt
-                );
-        return at;
-    }
-
-    public Task getTaskFromResultSet(ResultSet rs) throws SQLException {
-        String sArr[] = {
-                rs.getString(KEY_EST_1),
-                rs.getString(KEY_EST_2),
-                rs.getString(KEY_EST_3),
-                rs.getString(KEY_EST_4),
-                rs.getString(KEY_EST_5)
-        };
-        Task at = new Task(
-                rs.getInt(KEY_TEST_TYPE),
-                rs.getInt(KEY_WORK_TYPE),
-                rs.getDate(KEY_DATE),
-                sArr,
-                rs.getString(KEY_NAME)
-                );
-        return at;
+        return  new Attempt(rs);
     }
 
 
@@ -464,14 +533,13 @@ public class DBHelper implements AutoCloseable {
         ResultSet rs = stmt.executeQuery(query);
         //String login,String password, String name, String mail
         while (rs.next()) {
-            aLst.add(getTaskFromResultSet(rs));
+            aLst.add(new Task(rs));
         }
         return aLst;
     }
 
-
-    public ArrayList<String> getSchoolers(int group) throws SQLException {
-        ArrayList<String> aLst = new ArrayList<>();
+    public ArrayList<Schooler> getSchoolers(int group) throws SQLException {
+        ArrayList<Schooler> aLst = new ArrayList<>();
         String query = "SELECT * FROM " + TABLE_INFORMATIC +" WHERE ";
         String condition  = "";
         switch (group){
@@ -490,23 +558,25 @@ public class DBHelper implements AutoCloseable {
         ResultSet rs = stmt.executeQuery(query);
         //String login,String password, String name, String mail
         while (rs.next()) {
-            aLst.add(CustomOperations.reverseName(rs.getString(KEY_NAME)));
+            aLst.add(new Schooler(group,
+                    CustomOperations.reverseName(rs.getString(KEY_NAME)),
+                    rs.getInt(KEY_ID)));
         }
         return aLst;
     }
 
 
 
-    public ArrayList<Attempt> getAttempts(ArrayList<Task> lst, ArrayList<String> scoolerList) throws SQLException {
+    public ArrayList<Attempt> getAttempts(ArrayList<Task> lst, ArrayList<Schooler> scoolerList) throws SQLException {
         ArrayList<Attempt> aLst = new ArrayList<>();
         if (scoolerList.size()==0)return  aLst;
         String query = "SELECT * FROM " + attemptTable +" WHERE (";
         for (Task task:lst){
-            query += KEY_TEST_NAME + "="+toSQLString(task.name)+" OR ";
+            query += KEY_TASK_ID+ "="+task.id+" OR ";
         }
         query = query.substring(0,query.length()-4)+")AND(";
-        for (String name:scoolerList){
-            query += KEY_NAME + "="+toSQLString(name)+" OR ";
+        for (Schooler sc:scoolerList){
+            query += KEY_STUDENT_ID + "="+sc.id+" OR ";
         }
         query = query.substring(0,query.length()-4)+")";
         //System.out.println(query.length());
