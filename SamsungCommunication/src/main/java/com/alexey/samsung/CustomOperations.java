@@ -122,14 +122,16 @@ public class CustomOperations {
 
     public static void getAttemps( ArrayList<Task> tasks) throws Exception {
         try (WebSelenium webSelenium = new WebSelenium();DBHelper dbHelper = new DBHelper()) {
+            dbHelper.connect();
             webSelenium.loginToMdl();
+
             Thread.sleep(1000);
 
             for (Task t:tasks) {
                // if (t.id<20) continue;
                 ArrayList<Attempt> lst =
                         webSelenium.getAttempts(t.name, t.t_type==0);
-                dbHelper.connect();
+
 
                 for (int i = 0; i < lst.size(); i++) {
                     Attempt a = lst.get(i);

@@ -223,19 +223,6 @@ public class MainController {
             int rowCnt = lstNames.size();
 
             ArrayList<Attempt> att = dbHelper.getAttempts(tasks, lstNames);
-
-            att.sort(new Comparator<Attempt>() {
-                @Override
-                public int compare(Attempt o1, Attempt o2) {
-                    int n = (o1.task_id) - (o2.task_id);
-                    if (n != 0) return n;
-                    return o1.addDate.compareTo(o2.addDate);
-                }
-            });
-            for (Attempt l : att) {
-                System.out.println(l);
-            }
-
             System.out.println("Building table");
 
             buildTable(att, lstNames, tasks);
@@ -253,10 +240,10 @@ public class MainController {
 
         List<String> columnNames = new ArrayList<>();
         int N_COLS = tasks.size();
-        int ln = 180;
+        int ln = 110;
         columnNames.add("Имя Фамилия");
         for (int i = 0; i < N_COLS; i++) {
-            columnNames.add(tasks.get(i).name);
+            columnNames.add(tasks.get(i).name+"\n"+tasks.get(i).date);
             posByTask.put(tasks.get(i).id, i + 1);
         }
 
@@ -269,6 +256,7 @@ public class MainController {
             column.setCellValueFactory(param ->
                     new ReadOnlyObjectWrapper<>(param.getValue().get(finalIdx))
             );
+            column.setPrefWidth(ln);
             attemptTable.getColumns().add(column);
         }
 
@@ -282,7 +270,6 @@ public class MainController {
             }
         });
 
-        int N_ROWS = 5;
         // add data
         HashMap<Integer, Integer> posByName = new HashMap<>();
         for (int i = 0; i < lstNames.size(); i++) {
@@ -303,8 +290,8 @@ public class MainController {
                 int i = posByName.get(at.student_id);
                 int j = posByTask.get(at.task_id);
                 String s = dbHelper.getEstimateByVal(at)+"("+ (Math.round(Math.max(at.sum,at.evaluation)))+")";
-
-                data[i][j] = s.length() > 5 ? s.substring(0, 5) : s;
+                //String s = at.sum+" "+ at.evaluation;
+                data[i][j] = s;
                 // System.out.printf("%d %10s %3.1f\n",j,at.testName, (at.evaluation==0?at.sum:at.evaluation));
             }
 

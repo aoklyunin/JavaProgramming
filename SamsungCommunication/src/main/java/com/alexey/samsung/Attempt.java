@@ -61,7 +61,7 @@ public class Attempt{
         this.tm = rs.getString(DBHelper.KEY_TM);
         this.evaluation = rs.getFloat(DBHelper.KEY_EVAULATION);
         this.href = rs.getString(DBHelper.KEY_HREF);
-        this.sum = rs.getFloat(DBHelper.KEY_EVAULATION);
+        this.sum = rs.getFloat(DBHelper.KEY_SUM);
         this.student_id = rs.getInt(DBHelper.KEY_STUDENT_ID);
         timestamp = rs.getTimestamp(DBHelper.KEY_ADD_TIME);
         if (timestamp != null)

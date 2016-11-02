@@ -700,7 +700,7 @@ public class WebSelenium implements AutoCloseable {
             dbHelper.connect();
 
             int taskId = dbHelper.getIdByTaskName(attemptName);
-            if (taskId == -1 || taskId < 20) {
+            if (taskId == -1) {
                 System.out.println("Тест не найден");
                 return aLst;
             }
@@ -714,7 +714,7 @@ public class WebSelenium implements AutoCloseable {
                         if (hrLst.size() == 2) {
 
                             String name = hrLst.get(0).getText();
-                            int name_id = 0;
+
                             int task_id = 0;
                             String href = hrLst.get(1).getAttribute("href");
                             Attempt at;
@@ -723,18 +723,21 @@ public class WebSelenium implements AutoCloseable {
                                 System.out.println("Пользователь не найден");
                                 continue;
                             }
-
+                            System.out.println(tds+" "+flgCode);
                             if (flgCode) {
 
                                 ArrayList<WebElement> attemptList = getAList(tds.subList(8, tds.size()));
-                                double sum = 0;
+                                 double sum = 0;
                                 for (WebElement w : attemptList) {
                                     String s = w.getText();
                                     Pattern p = Pattern.compile("[а-я]");
                                     Matcher m = p.matcher(s);
+                                    System.out.println(s);
                                     if (!m.find())
-                                        sum += s.length() <= 1 ? 0 : Double.parseDouble(s.replace(",", "."));
+                                        sum += Double.parseDouble(s.replace(",", "."));
+
                                 }
+                               // System.out.println(sum);
                                 at = new Attempt(
                                         task_id,
                                         tds.get(3).getText(),
