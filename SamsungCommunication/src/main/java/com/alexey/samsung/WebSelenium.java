@@ -733,7 +733,7 @@ public class WebSelenium implements AutoCloseable {
                                     Pattern p = Pattern.compile("[а-я]");
                                     Matcher m = p.matcher(s);
                                     System.out.println(s);
-                                    if (!m.find())
+                                    if (!m.find()&&!s.equals("-"))
                                         sum += Double.parseDouble(s.replace(",", "."));
 
                                 }

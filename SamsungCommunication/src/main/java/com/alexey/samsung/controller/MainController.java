@@ -266,7 +266,7 @@ public class MainController {
             public int compare(Attempt o1, Attempt o2) {
                 int n = (o1.student_id) - (o2.student_id);
                 if (n != 0) return n;
-                return o1.addDate.compareTo(o2.addDate);
+                return (int)(Math.max(o1.sum,o1.evaluation)-Math.max(o2.sum,o2.evaluation));
             }
         });
 
@@ -294,7 +294,6 @@ public class MainController {
                 data[i][j] = s;
                 // System.out.printf("%d %10s %3.1f\n",j,at.testName, (at.evaluation==0?at.sum:at.evaluation));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
