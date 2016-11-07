@@ -1,0 +1,60 @@
+#AnchorPane{
+   -fx-background-color: #2EBCFB;
+   -fx-border-color: #113366;
+   -fx-border-width: 3px 3px 3px 3px;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.tab-pane{
+    -fx-tab-min-width:150px;
+    -fx-border-color: #113366;
+    -fx-border-width: 2px 2px 2px 2px;
+}
+
+.tab{
+    -fx-background-insets: 0 1 0 1,0,0;
+}
+.tab-pane .tab{
+    -fx-background-color: #e6e6e6;
+}
+
+.tab-pane .tab:selected{
+    -fx-background-color: #2EBCFB;
+}
+
+.tab .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: #828282;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: #113366;
+}
+
+#shortText{
+-fx-text-alignment: CENTER;
+-fx-font-weight: bold;
+}
+
+#longText{
+-fx-text-alignment: CENTER;
+-fx-font-weight: bold;
+}
+
+#emergencyBtn{
+    -fx-font-weight: bold;
+    -fx-font-size: 20;
+    -fx-background-color: #BBBBFF;
+    -fx-text-fill: #CC1144;
+    -fx-border-color: #CC1144;
+    -fx-border-width:  3px 3px 3px 3px;
+}
+#emergencyBtn:pressed {
+    -fx-background-color:#9999FF;
+}

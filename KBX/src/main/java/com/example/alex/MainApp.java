@@ -7,11 +7,14 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
-public class MainApp extends Application {
+import javax.swing.*;
 
-    public static void main(String[] args) throws Exception {
+ public class  MainApp extends Application {
+     public static void main(String[] args) throws Exception {
         launch(args);
     }
 
@@ -21,7 +24,13 @@ public class MainApp extends Application {
         FXMLLoader loader = new FXMLLoader();
         Parent root = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
         stage.setTitle("JavaFX and Maven");
-        stage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        // окно без заголовка
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.setScene(scene);
         stage.show();
+        stage.setResizable(false);
+        scene.getStylesheets().add("css/mainPage.css");
+
     }
 }
