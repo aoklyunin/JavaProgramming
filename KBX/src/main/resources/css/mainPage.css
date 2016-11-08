@@ -55,6 +55,160 @@
     -fx-border-color: #CC1144;
     -fx-border-width:  3px 3px 3px 3px;
 }
+
 #emergencyBtn:pressed {
     -fx-background-color:#9999FF;
 }
+
+.label{
+-fx-font-weight: bold;
+-fx-text-fill: #113366;
+}
+
+.slider{
+-fx-background-color:
+        linear-gradient(to top,#00FF00 0%, #FFFF00 50%, #FF0000 100%);
+}
+
+#s4{
+-fx-background-color:
+        linear-gradient(to right,#00FF00 0%, #FFFF00 50%, #FF0000 100%);
+}
+
+#s5{
+-fx-background-color:
+        linear-gradient(to right,#00FF00 0%, #FFFF00 50%, #FF0000 100%);
+}
+
+#rBar{
+       -fx-border-color: #113366;
+       -fx-border-width: 2px 2px 2px 2px;
+}
+
+#btnQuit{
+     -fx-border-color: #113366;
+     -fx-border-width: 2px 2px 2px 2px;
+     -tx-text-fill: #113366;
+     -fx-font-size: 14;
+     -fx-background-color:  #2EBCFB;
+     -fx-font-weight: bold;
+}
+#btnGraph{
+     -fx-border-color: #113366;
+     -fx-border-width: 2px 2px 2px 2px;
+     -tx-text-fill: #113366;
+     -fx-font-size: 14;
+     -fx-background-color:  #2EBCFB;
+     -fx-font-weight: bold;
+}
+#btnErrLog{
+     -fx-border-color: #113366;
+     -fx-border-width: 2px 2px 2px 2px;
+     -tx-text-fill: #113366;
+     -fx-font-size: 12;
+     -fx-background-color:  #2EBCFB;
+     -fx-font-weight: bold;
+}
+#btnSettings{
+     -fx-border-color: #113366;
+     -fx-border-width: 2px 2px 2px 2px;
+     -tx-text-fill: #113366;
+     -fx-font-size: 12;
+     -fx-background-color:  #2EBCFB;
+     -fx-font-weight: bold;
+}
+
+#quitBtn{
+     -fx-border-color: #113366;
+     -fx-border-width: 2px 2px 2px 2px;
+     -tx-text-fill: #113366;
+     -fx-font-size: 12;
+     -fx-background-color:  #2EBCFB;
+     -fx-font-weight: bold;
+}
+
+#enterBtn{
+     -fx-border-color: #113366;
+     -fx-border-width: 2px 2px 2px 2px;
+     -tx-text-fill: #113366;
+     -fx-font-size: 12;
+     -fx-background-color:  #2EBCFB;
+     -fx-font-weight: bold;
+}
+#showSettingsBtn{
+     -fx-border-color: #113366;
+     -fx-border-width: 2px 2px 2px 2px;
+     -tx-text-fill: #113366;
+     -fx-font-size: 12;
+     -fx-background-color:  #2EBCFB;
+     -fx-font-weight: bold;
+}
+
+#cancelBtn{
+     -fx-border-color: #113366;
+     -fx-border-width: 2px 2px 2px 2px;
+     -tx-text-fill: #113366;
+     -fx-font-size: 12;
+     -fx-background-color:  #2EBCFB;
+     -fx-font-weight: bold;
+}
+
+#saveBtn{
+     -fx-border-color: #113366;
+     -fx-border-width: 2px 2px 2px 2px;
+     -tx-text-fill: #113366;
+     -fx-font-size: 12;
+     -fx-background-color:  #2EBCFB;
+     -fx-font-weight: bold;
+}
+
+#nullTm{
+    -fx-border-color: #113366;
+    -fx-border-width: 2px 2px 2px 2px;
+    -tx-text-fill: #113366;
+    -fx-font-size: 12;
+    -fx-background-color:  #2EBCFB;
+    -fx-font-weight: bold;
+}
+
+#nullCiclCnt{
+    -fx-border-color: #113366;
+    -fx-border-width: 2px 2px 2px 2px;
+    -tx-text-fill: #113366;
+    -fx-font-size: 12;
+    -fx-background-color:  #2EBCFB;
+    -fx-font-weight: bold;
+}
+
+
+#nullTm{
+    -fx-border-color: #113366;
+    -fx-border-width: 2px 2px 2px 2px;
+    -tx-text-fill: #113366;
+    -fx-font-size: 12;
+    -fx-background-color:  #2EBCFB;
+    -fx-font-weight: bold;
+}
+#closeBtn{
+    -fx-border-color: #113366;
+    -fx-border-width: 2px 2px 2px 2px;
+    -tx-text-fill: #113366;
+    -fx-font-size: 12;
+    -fx-background-color:  #2EBCFB;
+    -fx-font-weight: bold;
+}
+
+#exportBtn{
+    -fx-border-color: #113366;
+    -fx-border-width: 2px 2px 2px 2px;
+    -tx-text-fill: #113366;
+    -fx-font-size: 12;
+    -fx-background-color:  #2EBCFB;
+    -fx-font-weight: bold;
+}
+
+#tabPane2{
+    -fx-border-width: 0px 0px 0px 0px;
+}
+
+

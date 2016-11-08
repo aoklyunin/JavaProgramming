@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.alex.controller.GraphController">
+   <children>
+      <Canvas fx:id="myCanvas" height="500.0" layoutX="50.0" layoutY="50.0" width="700.0" />
+      <Button fx:id="quitBtn" layoutX="700.0" layoutY="15.0" mnemonicParsing="false" text="Выход" prefWidth="80"/>
+       <TabPane fx:id="tabPane2" layoutY="10.0" prefHeight="318.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+           <tabs>
+               <Tab text="Положения">
+                   <content>
+                   </content>
+               </Tab>
+               <Tab text="Температура">
+                   <content>
+                   </content>
+               </Tab>
+           </tabs>
+       </TabPane>
+   </children>
+</AnchorPane>
